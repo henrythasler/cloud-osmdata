@@ -1,0 +1,622 @@
+---
+# areas:
+#   linear_tags: [man_made]
+tables:
+
+  poi_points:
+    type: point
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    - name: ele
+      type: integer
+      key: ele
+    - name: fee
+      type: string
+      key: fee
+    - name: access
+      type: enumerate
+      key: access
+      args:
+          values:
+            - private
+    - name: parking
+      type: enumerate
+      key: parking
+      args:
+          values:
+            - multi-storey
+            - underground
+    - name: subway
+      type: enumerate
+      key: subway
+      args:
+          values:
+            - "yes"
+    - name: religion
+      type: enumerate
+      key: religion
+      args:
+          values:
+            - christian
+    mapping:
+      natural: [peak]
+      highway: [bus_stop]
+      amenity: [pub, fast_food, restaurant, bar, biergarten, hospital, parking, shelter, place_of_worship]
+      tourism: [alpine_hut, hotel, viewpoint, information, zoo, aquarium, attraction, theme_park, camp_site, caravan_site]
+      leisure: [playground, water_park]
+      sport: [climbing]
+      geological: [palaeontological_site]
+      shop: [bicycle, supermarket]
+      railway: [station, halt, tram_stop]
+      man_made: [mast, tower, communications_tower, antenna]
+
+  poi_polygon:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    - name: ele
+      type: integer
+      key: ele
+    - name: fee
+      type: string
+      key: fee
+    - name: access
+      type: enumerate
+      key: access
+      args:
+          values:
+            - private
+    - name: parking
+      type: enumerate
+      key: parking
+      args:
+          values:
+            - multi-storey
+            - underground
+    - name: subway
+      type: enumerate
+      key: subway
+      args:
+          values:
+            - "yes"
+    - name: religion
+      type: enumerate
+      key: religion
+      args:
+          values:
+            - christian
+    mapping:
+      natural: [peak]
+      highway: [bus_stop]
+      amenity: [pub, fast_food, restaurant, bar, biergarten, hospital, parking, shelter, place_of_worship]
+      tourism: [alpine_hut, hotel, viewpoint, information, zoo, aquarium, attraction, theme_park, camp_site, caravan_site]
+      leisure: [playground, water_park]
+      sport: [climbing]
+      geological: [palaeontological_site]
+      shop: [bicycle, supermarket]
+      railway: [station, halt, tram_stop]
+      man_made: [mast, tower, communications_tower, antenna]
+
+  label_points:
+    type: point
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    - name: ele
+      type: integer
+      key: ele
+    - name: pop
+      type: integer
+      key: population
+    mapping:
+      place: [city, town, village, hamlet, suburb]
+
+  label_polygon:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    - name: ele
+      type: integer
+      key: ele
+    - name: pop
+      type: integer
+      key: population
+    mapping:
+      place: [city, town, village, hamlet, suburb]
+
+  housenumbers_temp:
+    type: point
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: number
+      type: string
+      key: addr:housenumber
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    mapping:
+      entrance: [__any__]
+
+  buildings_temp:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: number
+      type: string
+      key: addr:housenumber
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    mapping:
+      building: [__any__]
+
+  roads_temp:
+    type: linestring
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: validated_geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    - name: ref
+      type: string  
+      key: ref
+    - name: oneway
+      type: bool
+      key: oneway
+    - name: tracktype
+      type: enumerate
+      key: tracktype
+      args:
+          values:
+            - grade1
+            - grade2
+            - grade3
+            - grade4
+            - grade5
+    - name: service
+      type: enumerate
+      key: service
+      args:
+          values:
+            - parking_aisle
+            - driveway
+    - name: bicycle
+      type: enumerate
+      key: bicycle
+      args:
+          values:
+            - 'no'
+            - 'yes'
+            - designated
+    - name: scale
+      type: integer
+      key: mtb:scale
+    - name: tunnel
+      type: bool
+      key: tunnel
+    - name: bridge
+      type: bool
+      key: bridge
+    - name: layer
+      type: integer
+      key: layer
+    - name: rank
+      type: enumerate
+      key: highway
+      args:
+          values:
+            - motorway
+            - trunk
+            - primary
+            - secondary
+            - tertiary
+            - motorway_link
+            - trunk_link
+            - primary_link
+            - secondary_link
+            - tertiary_link
+            - road
+            - unclassified
+            - residential
+            - pedestrian
+            - living_street
+            - cycleway
+            - track
+            - path
+            - service
+            - footway
+            - steps
+            - bridleway
+    filters:
+      reject_regexp:
+        'mtb:scale': '^\D+.*$'
+    mapping:
+      highway: [motorway, motorway_link, trunk, trunk_link, primary, primary_link, secondary, secondary_link, tertiary, tertiary_link, road, unclassified, residential, pedestrian, living_street, service, track, path, footway, steps, bridleway, cycleway]
+      bicycle: [designated]
+
+  waterarea:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: area
+      type: area
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name      
+    - name: ele
+      type: integer
+      key: ele
+    mapping:
+      natural: [water, pond]
+      landuse: [reservoir, basin]
+      waterway: [riverbank, pond]
+      amenity: [swimming_pool]
+      leisure: [swimming_pool]
+
+  waterway:
+    type: linestring
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: validated_geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: tunnel
+      type: bool
+      key: tunnel
+    - name: layer
+      type: integer
+      key: layer
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name      
+    mapping:
+      waterway: [river, canal, stream, ditch]
+
+  landuse_import:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: area
+      type: area
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name      
+    mappings:
+      landuse:
+        mapping:
+          landuse: [residential, commercial, retail, industrial]
+          aeroway: [aerodrome]
+      military:
+        mapping:
+          landuse: [military]
+          military: [danger_area]      
+      leisure:
+        mapping:
+          leisure: [nature_reserve]
+
+  landcover_import:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: area
+      type: area
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: surface
+      type: string
+      key: surface
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    mappings:
+      landuse:
+        mapping:
+          landuse: [forest, recreation_ground, grass, cemetery]
+          leisure: [park, playground, pitch, golf_course]
+          natural: [wood, scrub, beach, wetland, glacier, heath]
+
+  transportation:
+    type: linestring
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    mapping:
+      route: [ferry]
+      aerialway: [cable_car, chairlift, gondola, chair_lift, mixed_lift, goods, drag_lift]
+      railway: [funicular]
+      attraction: [summer_toboggan]
+
+  manmade_points:
+    type: point
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    mapping:
+      power: [tower, station, sub_station]
+
+  manmade_lines:
+    type: linestring
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    mapping:
+      waterway: [weir]
+      man_made: [pier]
+      barrier: [fence]
+      aeroway: [taxiway, runway]
+      power: [line, minor_line]
+
+  manmade_polygons:
+    type: polygon
+    columns:
+    - name: osm_id
+      type: id      
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    mapping:
+      man_made: [pier]
+
+  piste:
+    type: linestring
+    columns:
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: ref
+      type: string
+      key: ref
+    - name: difficulty
+      type: enumerate
+      args:
+        values: [novice, easy, intermediate, advanced, expert, freeride, extreme]
+      key: piste:difficulty
+    mapping:
+      piste:type: [downhill]
+
+  cycleroute:
+    type: relation_member
+    relation_types: [route]
+    columns:
+    - name: geometry
+      type: geometry
+    - name: ref
+      type: string      
+      key: ref
+    - name: name
+      type: string      
+      key: name
+    mapping:
+      route: [bicycle]
+
+  # buildings:
+  #   type: polygon
+  #   columns:
+  #   - name: osm_id
+  #     type: id      
+  #   - name: geometry
+  #     type: geometry
+  #   mapping:
+  #     building: [__any__]
+
+  admin:
+    type: linestring
+    columns:
+    - name: geometry
+      type: geometry
+    - name: ref
+      type: string
+      key: ref
+    - name: level
+      type: integer
+      key: admin_level
+    mapping:
+      boundary: [administrative]
+
+  railway:
+    type: linestring
+    columns:
+    - name: geometry
+      type: geometry
+    - name: zorder
+      type: wayzorder
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: tunnel
+      type: bool
+      key: tunnel
+    - name: bridge
+      type: bool
+      key: bridge
+    - name: service
+      type: string
+      key: service
+    - name: usage
+      type: enumerate
+      args:
+        values: [main, branch, tourism]
+      key: usage      
+    - name: attraction
+      type: string
+      key: attraction
+    - name: layer
+      type: integer
+      key: layer
+    mapping:
+      railway: [rail, light_rail, miniature, monorail, narrow_gauge, preserved, subway, tram]
