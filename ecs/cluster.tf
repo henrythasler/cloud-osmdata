@@ -1,3 +1,7 @@
+resource "aws_iam_instance_profile" "ecsInstanceProfile" {
+  name = "ecsInstanceProfile-${var.project}"
+  role = "${aws_iam_role.ecsInstanceRole.name}"
+}
 resource "aws_iam_role" "ecsInstanceRole" {
   name               = "ecsInstanceRole-${var.project}"
   description        = "Role to run EC2-Instances for ${var.project}"
@@ -22,13 +26,8 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" 
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
-resource "aws_iam_instance_profile" "ecsInstanceProfile" {
-  name = "ecsInstanceProfile-${var.project}"
-  role = "${aws_iam_role.ecsInstanceRole.name}"
-}
-
 resource "aws_ecs_cluster" "gis_cluster" {
-  name = "gis-cluster"
+  name = "gis_cluster"
 
   setting {
     name = "containerInsights"
@@ -42,7 +41,7 @@ data "aws_ami" "latest_ecs" {
 
   filter {
     name = "name"
-    values = ["amzn2-ami-ecs-hvm*"]
+    values = ["*amazon-ecs-optimized"]
   }
 
   filter {
@@ -76,13 +75,20 @@ resource "aws_security_group" "cluster_security_group" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }  
 }
 
 resource "aws_launch_configuration" "launch_configuration" {
   name_prefix = "${var.EC2InstanceType}-"
   image_id = "${data.aws_ami.latest_ecs.id}"
   instance_type = "${var.EC2InstanceType}"
-  iam_instance_profile = "${aws_iam_instance_profile.ecsInstanceProfile.id}"
+  iam_instance_profile = "${aws_iam_instance_profile.ecsInstanceProfile.arn}"
+  # iam_instance_profile = "arn:aws:iam::324094553422:instance-profile/ecsInstanceRole" #"${aws_iam_instance_profile.ecsInstanceProfile.id}"
 
   # Networking
   associate_public_ip_address = true
@@ -91,7 +97,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     volume_size = 40
     volume_type = "gp2"
   }
-
+  
   security_groups = ["${aws_security_group.cluster_security_group.id}"]
 
   key_name = "${var.ssh_key}"
@@ -101,13 +107,30 @@ echo ECS_CLUSTER=${aws_ecs_cluster.gis_cluster.name} >> /etc/ecs/ecs.config;echo
 EOF
 }
 
+data "aws_subnet_ids" "subnets" {
+  vpc_id = "${var.vpc_id}"
+}
+
 resource "aws_autoscaling_group" "gis_cluster_group" {
+  depends_on = [
+    "aws_launch_configuration.launch_configuration",
+  ]
+  lifecycle {
+    create_before_destroy = true
+  }  
   name                 = "gis-cluster-autoscaling-group"
   launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
 
-  min_size = 0
-  max_size = 1
+  min_size         = 0
+  max_size         = 1
   desired_capacity = 1
  
-  availability_zones = ["eu-central-1a"]
+  # availability_zones  = ["eu-central-1a", "eu-central-1c", "eu-central-1b"]
+  vpc_zone_identifier = "${data.aws_subnet_ids.subnets.ids}"  #["subnet-0fd5e742", "subnet-19dd2d73", "subnet-81d6f9fc"]
+
+  tag {
+    key                 = "Name"
+    value               = "${var.project}-autoscaling-group"
+    propagate_at_launch = true
+  }  
 }

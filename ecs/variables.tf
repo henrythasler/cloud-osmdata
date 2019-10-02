@@ -11,6 +11,7 @@ variable "githubProject" {
 }
 
 variable "EC2InstanceType" {
+  # default = "t2.micro"
   default = "t3a.micro"
 }
 
@@ -18,6 +19,6 @@ variable "ssh_key" {
   default = "ec2-postgres"
 }
 
-variable "vpc_id" {  
+variable "vpc_id" {
 }
 variable "postgres_password" {}

@@ -36,8 +36,8 @@ resource "aws_ecs_task_definition" "postgis_server_task" {
   container_definitions = "${data.template_file.container_definitions.rendered}"
   task_role_arn = "${aws_iam_role.ecsTaskExecutionRole.arn}"
   execution_role_arn = "${aws_iam_role.ecsTaskExecutionRole.arn}"
-  cpu = 2048
-  memory = 961
+#   cpu = 2048
+  memory = 950
   requires_compatibilities = ["EC2"]
 }
 
