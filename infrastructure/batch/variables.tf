@@ -2,10 +2,6 @@ variable "region" {
   default = "eu-central-1"
 }
 
-variable "project" {
-  default = "postgis-server"
-}
-
 variable "postgres_user" {
   default = "postgres"
 }

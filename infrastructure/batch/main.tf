@@ -116,7 +116,7 @@ resource "aws_batch_job_definition" "prepare_local_database" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "download_pbf" {
@@ -140,7 +140,7 @@ resource "aws_batch_job_definition" "download_pbf" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "import_into_database" {
@@ -167,7 +167,7 @@ resource "aws_batch_job_definition" "import_into_database" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 
@@ -193,7 +193,7 @@ resource "aws_batch_job_definition" "postprocessing" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "production" {
@@ -218,7 +218,7 @@ resource "aws_batch_job_definition" "production" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "shp_download" {
@@ -240,7 +240,7 @@ resource "aws_batch_job_definition" "shp_download" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "shp_import" {
@@ -266,7 +266,7 @@ resource "aws_batch_job_definition" "shp_import" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "shp_postprocessing" {
@@ -291,7 +291,7 @@ resource "aws_batch_job_definition" "shp_postprocessing" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }
 
 resource "aws_batch_job_definition" "shp_water" {
@@ -322,5 +322,5 @@ resource "aws_batch_job_definition" "shp_water" {
     "mountPoints": [],
     "ulimits": []
 }
-EOF  
+EOF
 }

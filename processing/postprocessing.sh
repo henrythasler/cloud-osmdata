@@ -199,7 +199,7 @@ generalize "roads" "roads_gen13" 10 ", osm_id, class, subclass, oneway, tracktyp
 generalize "roads" "roads_gen12" 20 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=11 OR bridge OR (subclass='path' AND bicycle >= 3) OR (subclass IN ('track', 'service', 'cycleway') AND ST_Length(geometry) > 500) OR (subclass IN ('living_street', 'pedestrian', 'residential', 'unclassified') AND ST_Length(geometry) > 200)" &
 generalize "roads" "roads_gen11" 50 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=10" &
 generalize "roads" "roads_gen10" 100 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=4" &
-generalize "roads" "roads_gen9" 200 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
+#generalize "roads" "roads_gen9" 200 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
 generalize "roads" "roads_gen8" 400 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
 wait
 
@@ -220,7 +220,7 @@ wait
 filter "label" "label_gen15" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('city', 'town')" &
 filter "label" "label_gen14" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('city')" &
 filter "label" "label_gen13" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('city', 'hamlet')" &
-filter "label" "label_gen12" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('hamlet')" &
+#filter "label" "label_gen12" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('hamlet')" &
 filter "label" "label_gen11" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('hamlet')" &
 filter "label" "label_gen10" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('village', 'suburb', 'hamlet')" &
 filter "label" "label_gen8" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('town', 'village', 'suburb', 'hamlet')" &
