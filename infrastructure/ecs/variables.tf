@@ -10,7 +10,7 @@ variable "githubProject" {
   default = "https://github.com/henrythasler/docker-aws.git"
 }
 
-variable "EC2InstanceType" {
+variable "instance_class" {
   # default = "t2.micro"
   default = "t3a.micro"
 }

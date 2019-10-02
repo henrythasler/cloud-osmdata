@@ -84,9 +84,9 @@ resource "aws_security_group" "cluster_security_group" {
 }
 
 resource "aws_launch_configuration" "launch_configuration" {
-  name_prefix = "${var.EC2InstanceType}-"
+  name_prefix = "${var.instance_class}-"
   image_id = "${data.aws_ami.latest_ecs.id}"
-  instance_type = "${var.EC2InstanceType}"
+  instance_type = "${var.instance_class}"
   iam_instance_profile = "${aws_iam_instance_profile.ecsInstanceProfile.arn}"
   # iam_instance_profile = "arn:aws:iam::324094553422:instance-profile/ecsInstanceRole" #"${aws_iam_instance_profile.ecsInstanceProfile.id}"
 
