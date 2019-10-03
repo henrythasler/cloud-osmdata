@@ -93,13 +93,11 @@ data "template_file" "setup" {
     postgres_password = "${var.postgres_password}"
     region = "${var.region}"
     repository_url = "${var.repository_url}"
+    device_name = "${aws_volume_attachment.database_volume_attachment.device_name}"
   }
 }
 
 resource "aws_instance" "postgis" {
-  depends_on = [
-    "aws_security_group.ec2_security_group",
-  ]
   ami = "${data.aws_ami.amazonlinux.id}"
   instance_type = "${var.instance_type}"
   key_name = "${var.ssh_key}"
@@ -110,12 +108,23 @@ resource "aws_instance" "postgis" {
   }
 
   root_block_device {
-    volume_size = "${var.storage_size}"
-    volume_type = "gp2"
+    volume_size = "${tolist(data.aws_ami.amazonlinux.block_device_mappings)[0].ebs.volume_size}"
   }
 
   associate_public_ip_address = true
   vpc_security_group_ids = ["${aws_security_group.ec2_security_group.id}"]
 
   user_data = "${data.template_file.setup.rendered}"
+}
+
+
+resource "aws_ebs_volume" "database_volume" {
+  availability_zone = "${aws_instance.postgis.availability_zone}"
+  size = "${var.storage_size}"
+}
+
+resource "aws_volume_attachment" "database_volume_attachment" {
+  device_name = "/dev/sdg"
+  instance_id = "${aws_instance.postgis.id}"
+  volume_id = "${aws_ebs_volume.database_volume.id}"
 }

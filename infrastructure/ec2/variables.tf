@@ -11,7 +11,7 @@ variable "instance_type" {
 }
 
 variable "storage_size" {
-  default = "40"
+  default = "5"
 }
 
 variable "postgres_password" {}
@@ -25,4 +25,12 @@ variable "vpc_id" {
 
 variable "repository_url" {
   default = "localhost"
+}
+
+variable "domain" {
+  default = "cyclemap.link"
+}
+
+variable "db_prefix" {
+  default = "db"
 }
