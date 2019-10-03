@@ -27,7 +27,7 @@ data "template_file" "container_definitions" {
   vars = {
     postgres_password = "${var.postgres_password}"
     project = "${var.project}"
-    repository_url = "${aws_ecr_repository.ecr_repository.repository_url}"
+    repository_url = "${var.repository_url}"
   }
 }
 

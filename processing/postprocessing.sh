@@ -4,9 +4,9 @@
 set -e
 
 #defines
-NC='\033[0m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
+NC=''
+RED=''
+GREEN=''
 
 ### greate generalized tables
 # ref: https://www.cyberciti.biz/tips/bash-shell-parameter-substitution-2.html

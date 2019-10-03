@@ -10,13 +10,9 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket         = "terraform-state-0000"
-    key            = "cloud-osmdata/ec2/terraform.tfstate"
+    key            = "cloud-osmdata/ecs/terraform.tfstate"
     region         = "eu-central-1"
     dynamodb_table = "terraform-state-lock"
     encrypt        = true
   }
-}
-
-resource "aws_ecr_repository" "ecr_repository" {
-  name = "${var.project}"
 }

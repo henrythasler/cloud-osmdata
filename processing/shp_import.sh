@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exit when any command fails
+set -e
+
 mkdir -p shp
 aws s3 cp s3://${GIS_DATA_BUCKET}/data/shp ./shp --recursive --quiet
 printf "Done fetching shapefiles\n"

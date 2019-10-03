@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exit when any command fails
+set -e
+
 function generalize() {
     local source=${1}
     local target=${2}
@@ -32,6 +35,20 @@ psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
     -c "INSERT INTO public.bathymetry (depth, geometry) SELECT depth, geometry FROM ne_10m_bathymetry_a_10000;" \
     -c "CREATE INDEX ON public.bathymetry USING gist (geometry)" \
     -c "ANALYZE public.bathymetry"
+
+### remove fragments
+psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_k_200;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_j_1000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_i_2000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_h_3000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_g_4000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_f_5000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_e_6000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_d_7000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_c_8000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_b_9000;" 2>&1 >/dev/null \
+    -c "DROP TABLE IF EXISTS ne_10m_bathymetry_a_10000;" 2>&1 >/dev/null
 
 generalize "bathymetry" "bathymetry_gen4" 2000 ", depth" &
 generalize "bathymetry" "bathymetry_gen3" 8000 ", depth" &

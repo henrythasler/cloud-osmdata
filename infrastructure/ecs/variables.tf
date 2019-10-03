@@ -6,8 +6,8 @@ variable "project" {
   default = "postgis-server"
 }
 
-variable "githubProject" {
-  default = "https://github.com/henrythasler/docker-aws.git"
+variable "repository_url" {
+  default = "localhost"
 }
 
 variable "instance_class" {

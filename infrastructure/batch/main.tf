@@ -150,7 +150,7 @@ resource "aws_batch_job_definition" "import_into_database" {
 {
     "command": ["import.sh"],
     "image": "324094553422.dkr.ecr.eu-central-1.amazonaws.com/postgis-client:latest",
-    "memory": 8192,
+    "memory": 7000,
     "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
@@ -178,8 +178,8 @@ resource "aws_batch_job_definition" "postprocessing" {
 {
     "command": ["postprocessing.sh"],
     "image": "324094553422.dkr.ecr.eu-central-1.amazonaws.com/postgis-client:latest",
-    "memory": 512,
-    "vcpus": 4,
+    "memory": 2048,
+    "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
     "environment": [
@@ -203,8 +203,8 @@ resource "aws_batch_job_definition" "production" {
 {
     "command": ["production.sh"],
     "image": "324094553422.dkr.ecr.eu-central-1.amazonaws.com/postgis-client:latest",
-    "memory": 512,
-    "vcpus": 4,
+    "memory": 2048,
+    "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
     "environment": [
@@ -213,7 +213,8 @@ resource "aws_batch_job_definition" "production" {
         {"name": "POSTGIS_HOSTNAME", "value": "${var.postgis_hostname}"},
         {"name": "POSTGIS_USER", "value": "${var.postgres_user}"},
         {"name": "DATABASE_NAME", "value": "${var.database_local}"},
-        {"name": "PGPASSWORD", "value": "${var.postgres_password}"}
+        {"name": "PGPASSWORD", "value": "${var.postgres_password}"},
+        {"name": "GIS_DATA_BUCKET", "value": "${aws_s3_bucket.gis_data_0000.id}"}
     ],
     "mountPoints": [],
     "ulimits": []
@@ -228,8 +229,8 @@ resource "aws_batch_job_definition" "shp_download" {
 {
     "command": ["shp_download.sh"],
     "image": "324094553422.dkr.ecr.eu-central-1.amazonaws.com/postgis-client:latest",
-    "memory": 512,
-    "vcpus": 1,
+    "memory": 2048,
+    "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
     "environment": [
@@ -301,8 +302,8 @@ resource "aws_batch_job_definition" "shp_water" {
 {
     "command": ["shp_water.sh"],
     "image": "324094553422.dkr.ecr.eu-central-1.amazonaws.com/postgis-client:latest",
-    "memory": 1024,
-    "vcpus": 1,
+    "memory": 2048,
+    "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
     "environment": [
