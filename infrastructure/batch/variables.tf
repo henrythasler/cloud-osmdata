@@ -2,6 +2,10 @@ variable "region" {
   default = "eu-central-1"
 }
 
+variable "repository_url" {
+  default = "localhost"
+}
+
 variable "postgres_user" {
   default = "postgres"
 }
@@ -20,5 +24,5 @@ variable "database_shapes" {
 variable "postgres_password" {}
 
 variable "postgis_hostname" {
-  default = "localhost"
+  default = "db.cyclemap.link"
 }
