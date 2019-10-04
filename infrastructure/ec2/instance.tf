@@ -157,5 +157,5 @@ resource "aws_volume_attachment" "database_volume_attachment" {
 }
 
 output "instance" {
-  value = "${aws_instance.postgis.public_dns}"
+  value = "${aws_instance.postgis.public_ip}"
 }
