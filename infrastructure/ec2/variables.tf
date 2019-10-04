@@ -15,7 +15,7 @@ variable "instance_type" {
 }
 
 variable "storage_size" {
-  default = "10"
+  default = "40"
 }
 
 variable "device_name" {

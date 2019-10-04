@@ -2,7 +2,7 @@
 
 # install stuff
 yum update -y
-yum install htop -y
+yum install dstat htop -y
 amazon-linux-extras install docker
 systemctl enable docker
 systemctl start docker
@@ -43,6 +43,10 @@ if [ ! -f /var/spool/cron/root ]; then
     touch /var/spool/cron/root
     /usr/bin/crontab /var/spool/cron/root
 fi
+
 # run cron-job every minute
+# EBS device
 echo '0-59 * * * * (aws cloudwatch put-metric-data --region ${region} --dimensions Devices=${device_name} --metric-name FreeStorageSpace --namespace ${project} --value $(df --block-size=1 --output=avail ${device_name} | tail -n 1 | grep -o "[0-9]\+") --unit Bytes --timestamp $(date -u +"\%Y-\%m-\%dT\%H:\%M:\%SZ"))' >> /var/spool/cron/root
+# Root Volume
+echo '0-59 * * * * (aws cloudwatch put-metric-data --region ${region} --dimensions Volumes=$(mount | sed -n "s|^/dev/\(.*\) on / .*|\1|p") --metric-name FreeStorageSpace --namespace ${project} --value $(df --block-size=1 --output=avail /dev/$(mount | sed -n "s|^/dev/\(.*\) on / .*|\1|p") | tail -n 1 | grep -o "[0-9]\+") --unit Bytes --timestamp $(date -u +"\%Y-\%m-\%dT\%H:\%M:\%SZ"))' >> /var/spool/cron/root
 service cron reload
