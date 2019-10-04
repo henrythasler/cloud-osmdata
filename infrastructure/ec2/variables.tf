@@ -2,6 +2,10 @@ variable "region" {
   default = "eu-central-1"
 }
 
+variable "availability_zone" {
+  default = "a"
+}
+
 variable "project" {
   default = "postgis-server"
 }
@@ -11,7 +15,11 @@ variable "instance_type" {
 }
 
 variable "storage_size" {
-  default = "5"
+  default = "10"
+}
+
+variable "device_name" {
+  default = "/dev/sdg"
 }
 
 variable "postgres_password" {}
@@ -33,4 +41,9 @@ variable "domain" {
 
 variable "db_prefix" {
   default = "db"
+}
+
+# database mount location (absolute path incl. '/')
+variable "pgdata" {
+  default = "/pgdata"
 }

@@ -46,3 +46,21 @@ Host local database with docker and docker-compose. Import also with docker cont
 ## Ideas
 
 - Aurora serverless
+
+## References
+
+### Linux
+
+- [crontab guru](https://crontab.guru)
+- [Common Cron Mistakes](http://www.alleft.com/sysadmin/common-cron-mistakes/)
+
+### AWS 
+
+- [Making an Amazon EBS Volume Available for Use on Linux](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html)
+
+### Terraform
+
+- [Terraform – Mount EBS volume as part of user_data on an linux EC2 machine](http://www.sanjeevnandam.com/blog/ec2-mount-ebs-volume-during-launch-time)
+
+
+

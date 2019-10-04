@@ -57,9 +57,9 @@ resource "aws_security_group" "ec2_security_group" {
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "ec2-${var.project}"
-  role = "${aws_iam_role.ecsInstanceRole.name}"
+  role = "${aws_iam_role.ec2_instance_role.name}"
 }
-resource "aws_iam_role" "ecsInstanceRole" {
+resource "aws_iam_role" "ec2_instance_role" {
   name               = "ec2-${var.project}"
   description        = "Role to run EC2-Instances for ${var.project}"
   assume_role_policy = <<EOF
@@ -79,9 +79,16 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" {
-  role = "${aws_iam_role.ecsInstanceRole.name}"
+  role = "${aws_iam_role.ec2_instance_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
+
+# FIXME: Limit permissions to 'cloudwatch:PutMetricData'
+resource "aws_iam_role_policy_attachment" "CloudWatchFullAccess" {
+  role = "${aws_iam_role.ec2_instance_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+}
+
 
 data "aws_subnet_ids" "subnets" {
   vpc_id = "${var.vpc_id}"
@@ -90,18 +97,38 @@ data "aws_subnet_ids" "subnets" {
 data "template_file" "setup" {
   template = "${file("setup.tpl")}"
   vars = {
+    project = "${var.project}"
     postgres_password = "${var.postgres_password}"
     region = "${var.region}"
     repository_url = "${var.repository_url}"
-    device_name = "${aws_volume_attachment.database_volume_attachment.device_name}"
+    device_name = "${var.device_name}"
+    pgdata = "${var.pgdata}"
   }
 }
+
+# resource "aws_launch_template" "postgis_launch_template" {
+#   name = "postgis-template"
+
+#   image_id = "${data.aws_ami.amazonlinux.id}"
+#   instance_type = "${var.instance_type}"
+
+#   key_name = "${var.ssh_key}"
+#   iam_instance_profile {
+#     arn = "${aws_iam_instance_profile.instance_profile.arn}"
+#   }
+
+#   user_data = "${data.template_file.setup.rendered}"
+
+#   vpc_security_group_ids = ["${aws_security_group.ec2_security_group.id}"]
+# }
+
 
 resource "aws_instance" "postgis" {
   ami = "${data.aws_ami.amazonlinux.id}"
   instance_type = "${var.instance_type}"
   key_name = "${var.ssh_key}"
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
+  availability_zone = "${var.region}${var.availability_zone}"
 
   tags = {
     Name = "${var.project}"
@@ -119,12 +146,16 @@ resource "aws_instance" "postgis" {
 
 
 resource "aws_ebs_volume" "database_volume" {
-  availability_zone = "${aws_instance.postgis.availability_zone}"
+  availability_zone = "${var.region}${var.availability_zone}"
   size = "${var.storage_size}"
 }
 
 resource "aws_volume_attachment" "database_volume_attachment" {
-  device_name = "/dev/sdg"
+  device_name = "${var.device_name}"
   instance_id = "${aws_instance.postgis.id}"
   volume_id = "${aws_ebs_volume.database_volume.id}"
+}
+
+output "instance" {
+  value = "${aws_instance.postgis.public_dns}"
 }

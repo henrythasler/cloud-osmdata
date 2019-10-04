@@ -1,23 +1,48 @@
 #! /bin/bash
 
 # install stuff
-sudo yum update -y
-sudo yum install htop -y
-sudo amazon-linux-extras install docker
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo usermod -a -G docker ec2-user
+yum update -y
+yum install htop -y
+amazon-linux-extras install docker
+systemctl enable docker
+systemctl start docker
+usermod -a -G docker ec2-user
+
+# ATTENTION: bash variables syntax collide with terraform template variables. So bash variables have to be 'escaped' with '$$'
 
 # mount EBS
-file -s ${device_name} | awk -F'[`|'\'']' '{print $2}'  # get filesystem name
-sudo file -s /dev/nvme1n1   # check filesystem content
-# if '/dev/nvme1n1: data' then
-#   sudo mkfs -t xfs /dev/nvme1n1
+volume="$(file -s ${device_name} | awk -F'[`|'\'']' '{print $2}')"  # get volume name from device
+filesystem="$(file -s /dev/$${volume} | awk -F': ' '{print $2}')"  # check filesystem content
+if [ $${filesystem} == "data" ]
+then
+    mkfs -t xfs /dev/$${volume}
+fi
+mkdir ${pgdata}
+mount /dev/$${volume} ${pgdata}
+
+# setup automount on startup
+cp /etc/fstab /etc/fstab.orig
+# FIXME: replace ["|"] with something more strict
+blkid="$(blkid | grep /dev/$${volume} | awk -F'["|"]' '{print $2}')" # extract blkid
+echo "UUID=$${blkid}  ${pgdata} xfs defaults,nofail 0 2" >> /etc/fstab
 
 # start postgis container
-sudo $(sudo aws ecr get-login --no-include-email --region ${region})
-sudo docker pull ${repository_url}:latest
-sudo docker run -d --name postgis-server \
+$(aws ecr get-login --no-include-email --region ${region})
+docker pull ${repository_url}:latest
+docker run -d --name ${project} \
+    --restart always \
     -e POSTGRES_PASSWORD='${postgres_password}' \
+    -e PGDATA=/pgdata \
+    -v ${pgdata}:/pgdata \
     -p 5432:5432 \
     ${repository_url}:latest
+
+# Cloudwatch metrics for disk usage
+# setup crontab
+if [ ! -f /var/spool/cron/root ]; then
+    touch /var/spool/cron/root
+    /usr/bin/crontab /var/spool/cron/root
+fi
+# run cron-job every minute
+echo '0-59 * * * * (aws cloudwatch put-metric-data --region ${region} --dimensions Devices=${device_name} --metric-name FreeStorageSpace --namespace ${project} --value $(df --block-size=1 --output=avail ${device_name} | tail -n 1 | grep -o "[0-9]\+") --unit Bytes --timestamp $(date -u +"\%Y-\%m-\%dT\%H:\%M:\%SZ"))' >> /var/spool/cron/root
+service cron reload
