@@ -138,6 +138,35 @@ function cluster() {
 
 ### main()
 
+# buildings
+filter "buildings_temp" "buildings" ", osm_id" 
+generalize "buildings" "buildings_gen14" 5 ", osm_id" "ST_Area(geometry)>80"
+
+# poi merge
+merge_to_point "buildings_temp" "housenumbers_temp" "housenumbers" ", osm_id, number, name_de, name_en, name" "(number <> '') IS NOT FALSE" &
+merge_to_point "label_polygon" "label_points" "label" ", osm_id, class, subclass, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name, ele, pop" &
+merge_to_point "poi_polygon" "poi_points" "poi" ", osm_id, class, subclass, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name, ele, access, parking, subway, religion" &
+wait
+
+# remove temporary tables
+drop "buildings_temp"
+
+# roads - prepare
+filter "roads_temp" "roads" ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name" 
+# remove temporary table
+drop "roads_temp"
+
+# roads - generalize
+generalize "roads" "roads_gen15" 3 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "(service <=1) OR (ST_Length(geometry) > 50)" &
+generalize "roads" "roads_gen14" 5 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 100)" &
+generalize "roads" "roads_gen13" 10 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 200)" &
+generalize "roads" "roads_gen12" 20 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=11 OR bridge OR (subclass='path' AND bicycle >= 3) OR (subclass IN ('track', 'service', 'cycleway') AND ST_Length(geometry) > 500) OR (subclass IN ('living_street', 'pedestrian', 'residential', 'unclassified') AND ST_Length(geometry) > 200)" &
+generalize "roads" "roads_gen11" 50 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=10" &
+generalize "roads" "roads_gen10" 100 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=4" &
+#generalize "roads" "roads_gen9" 200 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
+generalize "roads" "roads_gen8" 400 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
+wait
+
 # landuse
 filter "landuse_import" "landuse" ", osm_id, class, subclass, area, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"
 generalize "landuse" "landuse_gen14" 5 ", osm_id, class, subclass, name, area" "ST_Area(geometry)>1000" &
@@ -189,32 +218,8 @@ generalize "transportation" "transportation_gen10" 50 ", osm_id, class, subclass
 generalize "transportation" "transportation_gen8" 100 ", osm_id, class, subclass" "ST_Length(geometry)>200" &
 wait
 
-# roads - prepare
-filter "roads_temp" "roads" ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name" 
-
-# roads - generalize
-generalize "roads" "roads_gen15" 3 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "(service <=1) OR (ST_Length(geometry) > 50)" &
-generalize "roads" "roads_gen14" 5 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 100)" &
-generalize "roads" "roads_gen13" 10 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 200)" &
-generalize "roads" "roads_gen12" 20 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=11 OR bridge OR (subclass='path' AND bicycle >= 3) OR (subclass IN ('track', 'service', 'cycleway') AND ST_Length(geometry) > 500) OR (subclass IN ('living_street', 'pedestrian', 'residential', 'unclassified') AND ST_Length(geometry) > 200)" &
-generalize "roads" "roads_gen11" 50 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=10" &
-generalize "roads" "roads_gen10" 100 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=4" &
-#generalize "roads" "roads_gen9" 200 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
-generalize "roads" "roads_gen8" 400 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
-wait
-
 # manmade_lines
 generalize "manmade_lines" "manmade_lines_gen13" 10 ", osm_id, class, subclass" "subclass IN('taxiway', 'runway')"
-
-# buildings
-filter "buildings_temp" "buildings" ", osm_id" 
-generalize "buildings" "buildings_gen14" 5 ", osm_id" "ST_Area(geometry)>80"
-
-# poi merge
-merge_to_point "buildings_temp" "housenumbers_temp" "housenumbers" ", osm_id, number, name_de, name_en, name" "(number <> '') IS NOT FALSE" &
-merge_to_point "label_polygon" "label_points" "label" ", osm_id, class, subclass, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name, ele, pop" &
-merge_to_point "poi_polygon" "poi_points" "poi" ", osm_id, class, subclass, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name, ele, access, parking, subway, religion" &
-wait
 
 # label filter
 filter "label" "label_gen15" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('city', 'town')" &
@@ -251,13 +256,11 @@ wait
 # merge "cycleroute" "cycleroute_merged"
 
 # remove all temporary tables
-drop "buildings_temp"
 drop "housenumbers_temp"
 drop "label_polygon"
 drop "label_points"
 drop "poi_polygon"
 drop "poi_points"
-drop "roads_temp"
 drop "landuse_import"
 drop "landcover_import"
 
