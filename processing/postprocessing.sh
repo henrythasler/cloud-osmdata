@@ -103,8 +103,8 @@ function filter() {
 
 function drop() {
     local table=${1}
-    psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${DATABASE_NAME} \
-        -c "DROP TABLE IF EXISTS import.${table}" 2>&1 >/dev/null
+    # psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${DATABASE_NAME} \
+    #     -c "DROP TABLE IF EXISTS import.${table}" 2>&1 >/dev/null
 }
 
 # merge all features into one multigeometry
@@ -161,6 +161,7 @@ generalize "roads" "roads_gen15" 3 ", osm_id, class, subclass, oneway, tracktype
 generalize "roads" "roads_gen14" 5 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 100)" &
 generalize "roads" "roads_gen13" 10 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 200)" &
 generalize "roads" "roads_gen12" 20 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=11 OR bridge OR (subclass='path' AND bicycle >= 3) OR (subclass IN ('track', 'service', 'cycleway') AND ST_Length(geometry) > 500) OR (subclass IN ('living_street', 'pedestrian', 'residential', 'unclassified') AND ST_Length(geometry) > 200)" &
+wait
 generalize "roads" "roads_gen11" 50 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=10" &
 generalize "roads" "roads_gen10" 100 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=4" &
 #generalize "roads" "roads_gen9" 200 ", osm_id, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref" "rank<=3" &
@@ -176,7 +177,7 @@ wait
 generalize_buffer "landuse_gen13" "landuse_gen12" 20 ", osm_id, class, subclass, name, area" "ST_Area(geometry)>5000" &
 generalize_buffer "landuse_gen13" "landuse_gen11" 50 ", osm_id, class, subclass, name, area" "ST_Area(geometry)>50000" &
 generalize_buffer "landuse_gen13" "landuse_gen10" 100 ", osm_id, class, subclass, name, area" "ST_Area(geometry)>200000" &
-
+wait
 generalize_buffer "landuse_gen13" "landuse_gen9" 150 ", osm_id, class, subclass, name, area" "ST_Area(geometry)>2000000" &
 generalize_buffer "landuse_gen13" "landuse_gen8" 200 ", osm_id, class, subclass, name, area" "ST_Area(geometry)>4000000" &
 wait
@@ -226,18 +227,23 @@ filter "label" "label_gen15" ", osm_id, class, subclass, name, ele, pop" "subcla
 filter "label" "label_gen14" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('city')" &
 filter "label" "label_gen13" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('city', 'hamlet')" &
 #filter "label" "label_gen12" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('hamlet')" &
+wait
 filter "label" "label_gen11" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('hamlet')" &
 filter "label" "label_gen10" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('village', 'suburb', 'hamlet')" &
 filter "label" "label_gen8" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('town', 'village', 'suburb', 'hamlet')" &
 wait
 
 # poi filter
+# FIXME: postgis crashes when executing more that two concurrent statements
 cluster "poi" "poi_cluster_gen11" 300 "subclass IN('station', 'halt') AND subway=0" &
 cluster "poi" "poi_cluster_gen12" 160 "subclass IN('station', 'halt', 'alpine_hut', 'hotel', 'peak', 'pub', 'fast_food', 'restaurant', 'biergarten', 'hospital', 'shelter', 'camp_site', 'caravan_site')" &
+wait
 cluster "poi" "poi_cluster_gen13" 160 "subclass IN('station', 'halt', 'alpine_hut', 'hotel', 'peak', 'pub', 'fast_food', 'restaurant', 'biergarten', 'hospital', 'shelter', 'camp_site', 'caravan_site', 'bicycle')" &
 cluster "poi" "poi_cluster_gen14" 120 "subclass NOT IN('playground', 'viewpoint', 'information')" &
+wait
 cluster "poi" "poi_cluster_gen15" 80 &
 cluster "poi" "poi_cluster_gen16" 40 &
+wait
 cluster "poi" "poi_cluster_gen17" 20 &
 wait
 

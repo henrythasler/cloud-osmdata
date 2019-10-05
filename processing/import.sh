@@ -5,6 +5,10 @@ set -e
 
 echo "preparing database..."
 
+# disconnect clients
+psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -w \
+    -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '${DATABASE_NAME}';"
+
 psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -w \
     -c "DROP DATABASE IF EXISTS ${DATABASE_NAME};" \
     -c "COMMIT;" \
