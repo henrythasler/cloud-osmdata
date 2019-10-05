@@ -53,6 +53,14 @@ Host local database with docker and docker-compose. Import also with docker cont
 
 - [crontab guru](https://crontab.guru)
 - [Common Cron Mistakes](http://www.alleft.com/sysadmin/common-cron-mistakes/)
+- [How to expand an (xfs) EBS volume on AWS EC2](https://www.cloudinsidr.com/content/how-to-expand-an-xfs-ebs-volume-on-aws-ec2/)
+- [Linux Command To Find the System Configuration And Hardware Information](https://www.cyberciti.biz/faq/linux-command-to-find-the-system-configuration-and-hardware-information/)
+- [/proc/stat explained](https://www.linuxhowtos.org/System/procstat.htm)
+
+### PostgeSQL
+
+- [postgres - Docker Official Images](https://hub.docker.com/_/postgres)
+- [SHOW ALL; For checking the Configuration of Server ](https://www.dbrnd.com/2018/04/postgresql-show-all-for-checking-the-configuration-of-server/)
 
 ### AWS 
 

@@ -51,9 +51,9 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "AWS/EC2", "CPUCreditBalance", "InstanceId", "${instance_id}", { "period": 60 } ],
-                    [ ".", "CPUCreditUsage", ".", ".", { "period": 60 } ],
-                    [ ".", "CPUSurplusCreditBalance", ".", ".", { "period": 60 } ],
+                    [ "AWS/EC2", "CPUCreditBalance", "InstanceId", "${instance_id}", { "period": 60, "color": "#2ca02c" } ],
+                    [ ".", "CPUCreditUsage", ".", ".", { "period": 60, "color": "#1f77b4" } ],
+                    [ ".", "CPUSurplusCreditBalance", ".", ".", { "period": 60, "color": "#ff7f0e" } ],
                     [ ".", "CPUSurplusCreditsCharged", ".", ".", { "period": 60 } ]
                 ],
                 "view": "timeSeries",
