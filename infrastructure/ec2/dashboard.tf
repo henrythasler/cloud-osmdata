@@ -9,7 +9,6 @@ data "template_file" "dashboard" {
     region = "${var.region}"
     instance_id = "${aws_instance.postgis.id}"
     device_name = "${var.device_name}"
-    # volume_name = "${data.aws_instance.postgis_server_info.ebs_block_device.device_name}"
   }
 }
 

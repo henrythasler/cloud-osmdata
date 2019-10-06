@@ -30,7 +30,8 @@
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "AWS/EC2", "CPUUtilization", "InstanceId", "${instance_id}", { "period": 60 } ]
+                    [ "AWS/EC2", "CPUUtilization", "InstanceId", "${instance_id}", { "period": 60 } ],
+                    [ "${project}", ".", "CPU", "overall", { "period": 60 } ]
                 ],
                 "view": "timeSeries",
                 "stacked": false,
@@ -128,6 +129,29 @@
                 },
                 "period": 300
             }
-        }
+        },
+        {
+            "type": "metric",
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "${project}", "MemTotal", "Memory", "meminfo" ],
+                    [ ".", "MemFree", ".", "." ],
+                    [ ".", "MemAvailable", ".", "." ]
+                ],
+                "region": "eu-central-1",
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        }        
     ]
 }

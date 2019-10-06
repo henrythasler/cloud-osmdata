@@ -56,6 +56,7 @@ Host local database with docker and docker-compose. Import also with docker cont
 - [How to expand an (xfs) EBS volume on AWS EC2](https://www.cloudinsidr.com/content/how-to-expand-an-xfs-ebs-volume-on-aws-ec2/)
 - [Linux Command To Find the System Configuration And Hardware Information](https://www.cyberciti.biz/faq/linux-command-to-find-the-system-configuration-and-hardware-information/)
 - [/proc/stat explained](https://www.linuxhowtos.org/System/procstat.htm)
+- [How to use a here documents to write data to a file in bash script](https://www.cyberciti.biz/faq/using-heredoc-rediection-in-bash-shell-script-to-write-to-file/)
 
 ### PostgeSQL
 

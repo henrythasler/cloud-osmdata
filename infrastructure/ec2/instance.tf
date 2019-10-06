@@ -95,7 +95,7 @@ data "aws_subnet_ids" "subnets" {
 }
 
 data "template_file" "setup" {
-  template = "${file("setup.tpl")}"
+  template = "${file("setup.sh.tpl")}"
   vars = {
     project = "${var.project}"
     postgres_password = "${var.postgres_password}"
@@ -105,23 +105,6 @@ data "template_file" "setup" {
     pgdata = "${var.pgdata}"
   }
 }
-
-# resource "aws_launch_template" "postgis_launch_template" {
-#   name = "postgis-template"
-
-#   image_id = "${data.aws_ami.amazonlinux.id}"
-#   instance_type = "${var.instance_type}"
-
-#   key_name = "${var.ssh_key}"
-#   iam_instance_profile {
-#     arn = "${aws_iam_instance_profile.instance_profile.arn}"
-#   }
-
-#   user_data = "${data.template_file.setup.rendered}"
-
-#   vpc_security_group_ids = ["${aws_security_group.ec2_security_group.id}"]
-# }
-
 
 resource "aws_instance" "postgis" {
   ami = "${data.aws_ami.amazonlinux.id}"
