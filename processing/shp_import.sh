@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # exit when any command fails
-set -e
+# set -e
 
 mkdir -p shp
 aws s3 cp s3://${GIS_DATA_BUCKET}/data/shp ./shp --recursive --quiet
@@ -48,7 +48,8 @@ do
             base=`basename $file .shp`
 
             # ogr2ogr --config PG_USE_COPY YES -t_srs EPSG:3857 -f PostgreSQL PG:"host=${POSTGIS_HOSTNAME} user=${POSTGIS_USER} dbname=${SHAPE_DATABASE_NAME}" ${file} 
-            ogr2ogr -clipsrc -180.0 -85.06 180.0 85.06 -lco ENCODING=UTF-8 -t_srs EPSG:3857 ./{$base}-3857.shp ${file} > /dev/null
+            ogr2ogr -clipsrc -180.0 -85.06 180.0 85.06 -skipfailures -lco ENCODING=UTF-8 -t_srs EPSG:3857 ./{$base}-3857.shp ${file} > /dev/null
+#            ogr2ogr -clipdst -20026376.39 -20048966.10 20026376.39 20048966.10 -skipfailures -lco ENCODING=UTF-8 -t_srs EPSG:3857 ./{$base}-3857.shp ${file} > /dev/null
             if [ $? -eq 0 ]
             then 
                 shp2pgsql -s 3857 -I -g geometry ./{$base}-3857.shp ${table} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null

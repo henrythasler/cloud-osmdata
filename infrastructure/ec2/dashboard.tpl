@@ -46,6 +46,29 @@
         },
         {
             "type": "metric",
+            "x": 0,
+            "y": 6,
+            "width": 12,
+            "height": 6,
+            "properties": {
+                "view": "timeSeries",
+                "stacked": false,
+                "metrics": [
+                    [ "${project}", "MemTotal", "Memory", "meminfo" ],
+                    [ ".", "MemFree", ".", "." ],
+                    [ ".", "MemAvailable", ".", "." ]
+                ],
+                "region": "eu-central-1",
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "metric",
             "x": 12,
             "y": 0,
             "width": 12,
@@ -129,29 +152,6 @@
                 },
                 "period": 300
             }
-        },
-        {
-            "type": "metric",
-            "x": 0,
-            "y": 6,
-            "width": 12,
-            "height": 6,
-            "properties": {
-                "view": "timeSeries",
-                "stacked": false,
-                "metrics": [
-                    [ "${project}", "MemTotal", "Memory", "meminfo" ],
-                    [ ".", "MemFree", ".", "." ],
-                    [ ".", "MemAvailable", ".", "." ]
-                ],
-                "region": "eu-central-1",
-                "period": 300,
-                "yAxis": {
-                    "left": {
-                        "min": 0
-                    }
-                }
-            }
-        }        
+        }     
     ]
 }

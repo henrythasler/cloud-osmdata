@@ -233,19 +233,14 @@ filter "label" "label_gen10" ", osm_id, class, subclass, name, ele, pop" "subcla
 filter "label" "label_gen8" ", osm_id, class, subclass, name, ele, pop" "subclass NOT IN('town', 'village', 'suburb', 'hamlet')" &
 wait
 
-# poi filter
-# FIXME: postgis crashes when executing more that two concurrent statements
-cluster "poi" "poi_cluster_gen11" 300 "subclass IN('station', 'halt') AND subway=0" &
-cluster "poi" "poi_cluster_gen12" 160 "subclass IN('station', 'halt', 'alpine_hut', 'hotel', 'peak', 'pub', 'fast_food', 'restaurant', 'biergarten', 'hospital', 'shelter', 'camp_site', 'caravan_site')" &
-wait
-cluster "poi" "poi_cluster_gen13" 160 "subclass IN('station', 'halt', 'alpine_hut', 'hotel', 'peak', 'pub', 'fast_food', 'restaurant', 'biergarten', 'hospital', 'shelter', 'camp_site', 'caravan_site', 'bicycle')" &
-cluster "poi" "poi_cluster_gen14" 120 "subclass NOT IN('playground', 'viewpoint', 'information')" &
-wait
-cluster "poi" "poi_cluster_gen15" 80 &
-cluster "poi" "poi_cluster_gen16" 40 &
-wait
-cluster "poi" "poi_cluster_gen17" 20 &
-wait
+# poi filter - high memory load, so no parallel processing.
+cluster "poi" "poi_cluster_gen11" 300 "subclass IN('station', 'halt') AND subway=0"
+cluster "poi" "poi_cluster_gen12" 160 "subclass IN('station', 'halt', 'alpine_hut', 'hotel', 'peak', 'pub', 'fast_food', 'restaurant', 'biergarten', 'hospital', 'shelter', 'camp_site', 'caravan_site')"
+cluster "poi" "poi_cluster_gen13" 160 "subclass IN('station', 'halt', 'alpine_hut', 'hotel', 'peak', 'pub', 'fast_food', 'restaurant', 'biergarten', 'hospital', 'shelter', 'camp_site', 'caravan_site', 'bicycle')"
+cluster "poi" "poi_cluster_gen14" 120 "subclass NOT IN('playground', 'viewpoint', 'information')"
+cluster "poi" "poi_cluster_gen15" 80
+cluster "poi" "poi_cluster_gen16" 40
+cluster "poi" "poi_cluster_gen17" 20
 
 # label waterarea preprocessing
 # create_centerlines "waterarea" "lake_centerlines" "/media/ramdisk" ", class, subclass, ele, CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name" "subclass = 'water' AND name <> '' AND ST_Area(geometry)>4000000"

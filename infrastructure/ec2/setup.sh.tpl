@@ -10,6 +10,15 @@ usermod -a -G docker ec2-user >> /startup.log
 
 # ATTENTION: bash variables syntax collide with terraform template variables. So bash variables have to be 'escaped' with '$$'
 
+# setup swapfile
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+sysctl vm.swappiness=10
+echo "vm.swappiness=10" >> /etc/sysctl.conf
+
 # mount EBS
 volume="$(file -s ${device_name} | awk -F'[`|'\'']' '{print $2}')"  # get volume name from device
 filesystem="$(file -s /dev/$${volume} | awk -F': ' '{print $2}')"  # check filesystem content
