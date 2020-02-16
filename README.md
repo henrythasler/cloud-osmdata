@@ -66,6 +66,7 @@ Host local database with docker and docker-compose. Import also with docker cont
 ### AWS 
 
 - [Making an Amazon EBS Volume Available for Use on Linux](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html)
+- [Disk space for your jobs](https://bedford.io/projects/cli/doc/aws-batch.html)
 
 ### Terraform
 

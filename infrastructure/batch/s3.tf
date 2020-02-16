@@ -73,3 +73,10 @@ resource "aws_s3_bucket_object" "shp_water" {
   source = "${var.script_location}shp_water.sh"
   etag   = "${filemd5("${var.script_location}shp_water.sh")}"
 }
+
+resource "aws_s3_bucket_object" "slice" {
+  bucket = "${aws_s3_bucket.gis_data_0000.id}"
+  key    = "scripts/slice.sh"
+  source = "${var.script_location}slice.sh"
+  etag   = "${filemd5("${var.script_location}slice.sh")}"
+}
