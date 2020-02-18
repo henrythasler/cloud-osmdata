@@ -238,17 +238,10 @@ resource "aws_batch_job_definition" "slice" {
 {
     "command": ["slice.sh"],
     "image": "${var.repository_url}:latest",
-    "memory": 512,
+    "memory": 3000,
     "vcpus": 1,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
-    "volumes": [
-      {
-        "host": {
-          "sourcePath": "/gisdata"
-        },
-        "name": "data"
-      }
-    ],
+    "volumes": [],
     "environment": [
         {"name": "BATCH_FILE_TYPE", "value": "script"},
         {"name": "BATCH_FILE_S3_URL", "value": "s3://${aws_s3_bucket_object.slice.bucket}/${aws_s3_bucket_object.slice.id}"},
@@ -260,13 +253,7 @@ resource "aws_batch_job_definition" "slice" {
         {"name": "OUT_FILE", "value": "germany-alps.osm.pbf"},
         {"name": "SOURCE_FILE", "value": "europe-latest.osm.pbf"}
     ],
-    "mountPoints": [
-        {
-          "sourceVolume": "data",
-          "containerPath": "/gisdata",
-          "readOnly": false
-        }
-    ],
+    "mountPoints": [],
     "ulimits": []
 }
 EOF
