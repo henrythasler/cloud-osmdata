@@ -6,8 +6,6 @@ tables:
   poi_points:
     type: point
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -69,8 +67,6 @@ tables:
   poi_polygon:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -132,8 +128,6 @@ tables:
   label_points:
     type: point
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -161,8 +155,6 @@ tables:
   label_polygon:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -190,8 +182,6 @@ tables:
   housenumbers_temp:
     type: point
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: number
@@ -212,8 +202,6 @@ tables:
   buildings_temp:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: number
@@ -234,8 +222,6 @@ tables:
   roads_temp:
     type: linestring
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: validated_geometry
     - name: class
@@ -331,8 +317,6 @@ tables:
   waterarea:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: area
@@ -363,8 +347,6 @@ tables:
   waterway:
     type: linestring
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: validated_geometry
     - name: class
@@ -392,8 +374,6 @@ tables:
   landuse_import:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: area
@@ -427,8 +407,6 @@ tables:
   landcover_import:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: area
@@ -459,8 +437,6 @@ tables:
   transportation:
     type: linestring
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -485,8 +461,6 @@ tables:
   manmade_points:
     type: point
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -499,8 +473,6 @@ tables:
   manmade_lines:
     type: linestring
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
@@ -517,8 +489,6 @@ tables:
   manmade_polygons:
     type: polygon
     columns:
-    - name: osm_id
-      type: id      
     - name: geometry
       type: geometry
     - name: class
