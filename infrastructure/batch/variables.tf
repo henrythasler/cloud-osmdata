@@ -35,11 +35,11 @@ variable "device_name" {
 
 
 variable "volume_size" {
-  default = "42"
+  default = "64"
 }
 
 variable "docker_volume_size" {
-  default = "30"
+  default = "60"
 }
 
 

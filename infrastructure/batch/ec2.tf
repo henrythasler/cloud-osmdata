@@ -15,7 +15,7 @@ data "template_file" "setup" {
   template = "${file("setup.sh.tpl")}"
   vars = {
     device_name = "${var.device_name}"
-    docker_volume_size = "${var.docker_volume_size}"
+    docker_volume_size = "${var.docker_volume_size}" 
   }
 }
 
