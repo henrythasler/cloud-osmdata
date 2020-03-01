@@ -7,7 +7,7 @@ variable "availability_zone" {
 }
 
 variable "project" {
-  default = "postgis-server-europe"
+  default = "postgis-server-spot"
 }
 
 variable "instance_type" {
@@ -15,7 +15,11 @@ variable "instance_type" {
 }
 
 variable "storage_size" {
-  default = "500"
+  default = "35"
+}
+
+variable "storage_type" {
+  default = "gp2"
 }
 
 variable "device_name" {
@@ -40,7 +44,7 @@ variable "domain" {
 }
 
 variable "db_prefix" {
-  default = "europe"
+  default = "spot"
 }
 
 # database mount location (absolute path incl. '/')

@@ -29,6 +29,10 @@ data "aws_ami" "amazonlinux" {
   owners = ["137112412989"] # Amazon
 }
 
+data "aws_vpc" "vpc" {
+  id = "${var.vpc_id}"
+}
+
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2-security-group-${var.project}"
   description = "Allow SSH and postgres inbound traffic"
@@ -45,7 +49,7 @@ resource "aws_security_group" "ec2_security_group" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${cidrsubnet(data.aws_vpc.vpc.cidr_block, 0, 0)}"]
   }
   egress {
     from_port   = 0
@@ -88,7 +92,6 @@ resource "aws_iam_role_policy_attachment" "CloudWatchFullAccess" {
   role = "${aws_iam_role.ec2_instance_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchFullAccess"
 }
-
 
 data "aws_subnet_ids" "subnets" {
   vpc_id = "${var.vpc_id}"
@@ -136,7 +139,7 @@ resource "aws_spot_instance_request" "postgis" {
 resource "aws_ebs_volume" "database_volume" {
   availability_zone = "${var.region}${var.availability_zone}"
   size = "${var.storage_size}"
-  type = "sc1"
+  type = "${var.storage_type}"
 }
 
 resource "aws_volume_attachment" "database_volume_attachment" {
