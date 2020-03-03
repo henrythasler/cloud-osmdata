@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # exit when any command fails
-# set -e
+set -e
+
+# debug output
+# set -x
 
 mkdir -p shp
 aws s3 cp s3://${GIS_DATA_BUCKET}/data/shp ./shp --recursive --quiet
@@ -38,7 +41,9 @@ do
 
         ### auto-detect CRS. The tail-part is a bit hacky...
         #FIXME: find another solution to determine shapefile CRS
-        crs=$(ogrinfo -ro -al -so ${file} | grep "AUTHORITY" | tail -n1 | grep -Eo "[0-9]+")
+        crs=$(ogrinfo -ro -al -so ${file} | grep "EPSG" | tail -n1 | grep -Eo "[0-9]+")
+
+        printf "CRS is ${crs}"
 
         # shp2pgsql -s ${crs} -I -g geometry ${file} ${table} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null
         # exit

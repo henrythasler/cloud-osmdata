@@ -222,8 +222,10 @@ resource "aws_batch_job_definition" "shp_water" {
         {"name": "SHAPEFOLDER", "value": "data/shp/simplified-water-polygons-split-3857"},
         {"name": "SHAPEFILE", "value": "simplified_water_polygons"},
         {"name": "GRID", "value": "grid_coarse"},
-        {"name": "RESOLUTION", "value": "1024"},
-        {"name": "OUTPUT", "value": "water_gen"}
+        {"name": "RESOLUTION", "value": "2048"},
+        {"name": "OUTPUT", "value": "water_gen"},
+        {"name": "INITIALZOOM", "value": "3"},
+        {"name": "ZOOMLEVELS", "value": "4"}
     ],
     "mountPoints": [],
     "ulimits": []

@@ -103,8 +103,8 @@ function filter() {
 
 function drop() {
     local table=${1}
-    # psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${DATABASE_NAME} \
-    #     -c "DROP TABLE IF EXISTS import.${table}" 2>&1 >/dev/null
+    psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${DATABASE_NAME} \
+        -c "DROP TABLE IF EXISTS import.${table}" 2>&1 >/dev/null
 }
 
 # merge all features into one multigeometry

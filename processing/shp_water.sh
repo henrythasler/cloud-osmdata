@@ -3,10 +3,10 @@
 # exit when any command fails
 set -e
 
-# mkdir -p shp
-# aws s3 cp s3://${GIS_DATA_BUCKET}/${SHAPEFOLDER} ./shp --recursive --quiet
-# printf "Done fetching shapefiles\n"
-# SOURCE="shp/${SHAPEFILE}"
+mkdir -p shp
+aws s3 cp s3://${GIS_DATA_BUCKET}/${SHAPEFOLDER} ./shp --recursive --quiet
+printf "Done fetching shapefiles\n"
+SOURCE="shp/${SHAPEFILE}"
 
 function generalize_raster() {
     local source=${1}
@@ -14,8 +14,8 @@ function generalize_raster() {
     local resolution=${3}
     local grid=${4}
 
-    printf "gdal_rasterize (${RESOLUTION}x${RESOLUTION}): "
-    gdal_rasterize -init 255 -burn 0 -ot Byte -ts ${RESOLUTION} ${RESOLUTION} -co COMPRESS=DEFLATE -co ZLEVEL=9 -co TILED=YES ${SOURCE}.shp rasterized.tif
+    printf "gdal_rasterize (${resolution}x${resolution}) to ${target}: "
+    gdal_rasterize -init 255 -burn 0 -ot Byte -ts ${resolution} ${resolution} -co COMPRESS=DEFLATE -co ZLEVEL=9 -co TILED=YES ${source}.shp rasterized.tif
 
     # prepare vrt
     printf "  gdalbuildvrt: "
@@ -39,33 +39,40 @@ function generalize_raster() {
     ogr2ogr -fid 0 filtered.shp raw.shp
 
     # count grid features
-    count=$(ogrinfo -ro -al -sql "SELECT COUNT(id) FROM ${GRID}" /grids/${GRID}.shp | grep "(Integer)" | grep -Eo "[0-9]+")
+    count=$(ogrinfo -ro -al -sql "SELECT COUNT(id) FROM ${grid}" /grids/${grid}.shp | grep "(Integer)" | grep -Eo "[0-9]+")
     printf "  slicing with grid (${count} features): "
 
     # slice resulting shapefile using grid
-    ogr2ogr "${OUTPUT}.shp" -clipsrc "/grids/${GRID}.shp" -clipsrcwhere id=1 filtered.shp
-    for (( i = 2; i <= $count; i++ )) 
+    ogr2ogr "${target}.shp" -clipsrc "/grids/${grid}.shp" -clipsrcwhere id=1 filtered.shp
+    for (( j = 2; j <= $count; j++ )) 
     do
-        if [ $(( $i % 10 )) -eq 0 ]; then
+        if [ $(( $j % 10 )) -eq 0 ]; then
             printf "."
         fi
-        ogr2ogr -append "${OUTPUT}.shp" -clipsrc "/grids/${GRID}.shp" -clipsrcwhere id=${i} filtered.shp
+        ogr2ogr -append "${target}.shp" -clipsrc "/grids/${grid}.shp" -clipsrcwhere id=${j} filtered.shp
     done
     printf "  done\n"
 
-    printf "  starting import into \"${SHAPE_DATABASE_NAME}\", table \"${OUTPUT}\".\n"
-    psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} -c "DROP TABLE IF EXISTS ${OUTPUT};" 2>&1 >/dev/null -c "COMMIT;" 2>&1 >/dev/null 
-    shp2pgsql -s 3857 -I -g geometry ${OUTPUT}.shp ${OUTPUT} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null
-    rm 
+    printf "  starting import into \"${SHAPE_DATABASE_NAME}\", table \"${target}\".\n"
+    psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
+        -c "DROP TABLE IF EXISTS ${target};" 2>&1 >/dev/null \
+        -c "COMMIT;" 2>&1 >/dev/null 
+    shp2pgsql -s 3857 -I -g geometry ${target}.shp ${target} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null
+    # rm 
 }
 
-for (( i = 0; i < $ZOOMLEVELS; i++ )) 
+printf "generalizing ${ZOOMLEVELS} levels, starting with ${INITIALZOOM}\n"
+
+for (( i = 0; i < ${ZOOMLEVELS}; i++ )) 
 do  
+    printf "${i} start\n"
     resolution=$((${RESOLUTION}*2**${i}))
     generalize_raster ${SOURCE} ${OUTPUT}$((${INITIALZOOM}+${i})) ${resolution} ${GRID}
+    printf "${i} done\n"
 done
 
+printf "finished\n"
 
-### show resulting database size
-# psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
-#     -c "SELECT pg_size_pretty(pg_database_size('${SHAPE_DATABASE_NAME}')) as db_size;"
+## show resulting database size
+psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
+    -c "SELECT pg_size_pretty(pg_database_size('${SHAPE_DATABASE_NAME}')) as db_size;"
