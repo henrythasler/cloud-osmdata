@@ -39,7 +39,7 @@ Host database on EC2 instance. Import with another EC2 instance.
 
 Host database on Amazon RDS. Import with AWS Batch.
 
-### docker
+### localhost
 
 Host local database with docker and docker-compose. Import also with docker containers.
 

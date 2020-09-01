@@ -21,11 +21,19 @@ psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -w -d ${DATABASE_NAME} \
     -c "ALTER DATABASE ${DATABASE_NAME} SET postgis.backend = geos;"
 
 echo "done"
+sleep 1s
 psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -w -d ${DATABASE_NAME} \
     -c "SELECT PostGIS_full_version();"
 
-aws s3 cp s3://${GIS_DATA_BUCKET}/data/pbf/${IMPORT_FILE} osmdata.osm.pbf --no-progress
+if [ -z ${LOCALHOST+x} ]; 
+then 
+    aws s3 cp s3://${GIS_DATA_BUCKET}/data/pbf/${IMPORT_FILE} osmdata.osm.pbf --no-progress
+    aws s3 cp s3://${GIS_DATA_BUCKET}/imposm/mapping.yaml mapping.yaml --no-progress
+else 
+    echo "LOCALHOST is set to '$LOCALHOST'"; 
+    pwd
+fi
+
 du -h osmdata.osm.pbf
-aws s3 cp s3://${GIS_DATA_BUCKET}/imposm/mapping.yaml mapping.yaml --no-progress
 imposm import -mapping mapping.yaml -read osmdata.osm.pbf -overwritecache -write -optimize -connection 'postgis://'${POSTGIS_USER}':'${PGPASSWORD}'@'${POSTGIS_HOSTNAME}'/'${DATABASE_NAME}'?prefix=NONE'
 echo "all done"

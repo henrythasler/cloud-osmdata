@@ -1,0 +1,120 @@
+version: "3.7"
+services:
+  postgis:
+    image: "img-postgis:0.9"
+    container_name: ${POSTGIS_HOSTNAME}
+    networks: 
+      - gis
+    volumes:
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ${HOST_DATABASE_LOCATION}:/pgdata
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      - PGDATA=/pgdata
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+
+  preprocessing:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ./../../processing/preprocessing.sh:/preprocessing.sh:ro
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - LOCALHOST=${LOCALHOST}
+    entrypoint: bash
+    command: /preprocessing.sh
+
+  import:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ${IMPORT_PATH}${IMPORT_FILE}:/tmp/osmdata.osm.pbf:ro
+      - ${IMPOSM_MAPPING}:/tmp/mapping.yaml:ro
+      - ./../../processing/import.sh:/import.sh:ro
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - LOCALHOST=${LOCALHOST}
+    entrypoint: bash
+    command: /import.sh
+
+  postprocessing:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ./../../processing/postprocessing.sh:/postprocessing.sh:ro
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - DATABASE_NAME=${DATABASE_NAME}
+    entrypoint: bash
+    command: /postprocessing.sh
+
+  borders:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
+    volumes:
+      - ${IMPORT_PATH}:/data
+      - ./import/osmborder.sh:/osmborder.sh:ro
+    command: bash /osmborder.sh
+
+  shapes:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
+    volumes:
+      - ${IMPORT_PATH}shp:/shp:ro
+      - ./import/shapes_import.sh:/shapes_import.sh:ro
+    command: bash /shapes_import.sh
+    
+  shapes_postprocessing:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
+    volumes:
+      - ./import/shapes_postprocessing.sh:/shapes_postprocessing.sh:ro
+    command: bash /shapes_postprocessing.sh
+        
+  checkdb:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    command: psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${DATABASE_NAME} -c "SELECT COUNT(*) from pg_stat_activity;" 
+
+networks:
+  gis:
+    name: gis
