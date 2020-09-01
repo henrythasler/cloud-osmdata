@@ -469,6 +469,7 @@ tables:
       type: mapping_value
     mapping:
       power: [tower, station, sub_station]
+      barrier: [chain, block, bollard, gate, sliding_gate, lift_gate, swing_gate]
 
   manmade_lines:
     type: linestring
