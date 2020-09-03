@@ -63,58 +63,6 @@ services:
     entrypoint: bash
     command: /postprocessing.sh
 
-  borders:
-    image: "img-postgis:client"
-    depends_on:
-      - postgis
-    networks: 
-      - gis
-    environment:
-      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
-      - POSTGIS_USER=${POSTGIS_USER}
-      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
-    volumes:
-      - ${IMPORT_PATH}:/data
-      - ./import/osmborder.sh:/osmborder.sh:ro
-    command: bash /osmborder.sh
-
-  shapes:
-    image: "img-postgis:client"
-    depends_on:
-      - postgis
-    networks: 
-      - gis
-    environment:
-      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
-      - POSTGIS_USER=${POSTGIS_USER}
-      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
-    volumes:
-      - ${IMPORT_PATH}shp:/shp:ro
-      - ./import/shapes_import.sh:/shapes_import.sh:ro
-    command: bash /shapes_import.sh
-    
-  shapes_postprocessing:
-    image: "img-postgis:client"
-    depends_on:
-      - postgis
-    networks: 
-      - gis
-    environment:
-      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
-      - POSTGIS_USER=${POSTGIS_USER}
-      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
-    volumes:
-      - ./import/shapes_postprocessing.sh:/shapes_postprocessing.sh:ro
-    command: bash /shapes_postprocessing.sh
-        
-  checkdb:
-    image: "img-postgis:client"
-    depends_on:
-      - postgis
-    networks: 
-      - gis
-    command: psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${DATABASE_NAME} -c "SELECT COUNT(*) from pg_stat_activity;" 
-
 networks:
   gis:
     name: gis
