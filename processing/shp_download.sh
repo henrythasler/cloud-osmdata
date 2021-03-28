@@ -12,6 +12,7 @@ shapefiles=(
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_rivers_europe.zip    
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_geographic_lines.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_countries.zip
+    https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_bathymetry_all.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_geography_marine_polys.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_geography_regions_elevation_points.zip
@@ -43,7 +44,14 @@ do
             rm -r ${folder}
         done
         rm ${shapefolder}${filename}
-        aws s3 cp ${shapefolder}${filename%.*}/ s3://${GIS_DATA_BUCKET}/data/shp/${filename%.*} --recursive --no-progress
+
+        if [ -z ${LOCALHOST+x} ]; 
+        then 
+            aws s3 cp ${shapefolder}${filename%.*}/ s3://${GIS_DATA_BUCKET}/data/shp/${filename%.*} --recursive --no-progress
+        else 
+            echo "LOCALHOST is set to '$LOCALHOST'"; 
+            pwd
+        fi
         printf " ok"
     else
         printf " Download error"

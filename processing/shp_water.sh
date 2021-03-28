@@ -4,7 +4,15 @@
 set -e
 
 mkdir -p shp
-aws s3 cp s3://${GIS_DATA_BUCKET}/${SHAPEFOLDER} ./shp --recursive --quiet
+
+if [ -z ${LOCALHOST+x} ]; 
+then 
+    aws s3 cp s3://${GIS_DATA_BUCKET}/${SHAPEFOLDER} ./shp --recursive --quiet
+else 
+    echo "LOCALHOST is set to '$LOCALHOST'"; 
+    pwd
+fi
+
 printf "Done fetching shapefiles\n"
 SOURCE="shp/${SHAPEFILE}"
 

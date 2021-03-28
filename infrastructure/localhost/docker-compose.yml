@@ -63,6 +63,76 @@ services:
     entrypoint: bash
     command: /postprocessing.sh
 
+  shp_download:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ${IMPORT_PATH}:/tmp/data
+      - ./../../processing/shp_download.sh:/shp_download.sh:ro
+    environment:
+      - LOCALHOST=${LOCALHOST}
+    entrypoint: bash
+    command: /shp_download.sh    
+
+  shp_import:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ${IMPORT_PATH}:/tmp
+      - ./../../processing/shp_import.sh:/shp_import.sh:ro
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
+      - LOCALHOST=${LOCALHOST}
+    entrypoint: bash
+    command: /shp_import.sh
+
+  shp_postprocessing:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ./../../processing/shp_postprocessing.sh:/shp_postprocessing.sh:ro
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
+      - LOCALHOST=${LOCALHOST}
+    entrypoint: bash
+    command: /shp_postprocessing.sh
+
+  shp_water:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ${IMPORT_PATH}:/tmp
+      - ./../../processing/shp_water.sh:/shp_water.sh:ro
+    environment:
+      - POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME}
+      - POSTGIS_USER=${POSTGIS_USER}
+      - SHAPE_DATABASE_NAME=${SHAPE_DATABASE_NAME}
+      - LOCALHOST=${LOCALHOST}
+      - SHAPEFILE=simplified-water-polygons-split-3857/simplified_water_polygons
+      - GRID=grid_coarse
+      - RESOLUTION=2048
+      - OUTPUT=water_gen
+      - INITIALZOOM=3
+      - ZOOMLEVELS=4
+    entrypoint: bash
+    command: /shp_water.sh    
+
 networks:
   gis:
     name: gis
