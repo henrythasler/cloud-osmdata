@@ -16,7 +16,7 @@ DOWNLOAD_URL|http://download.geofabrik.de/europe-latest.osm.pbf
 OBJECT_NAME|europe-latest.osm.pbf
 
 9. Hit `Submit`
-10. Go to the Batch Dashboard and wait until the job finishes.
+10. Go to the Batch Dashboard and wait until the job finishes (7min).
 
 ## Slice the region
 
@@ -26,7 +26,7 @@ OBJECT_NAME|europe-latest.osm.pbf
 4. Job Definition: `slice:9`
 5. Job Queue: `gisdata-batch`
 6. Expand `Additional configuration`
-7. Edit as follows:
+7. Edit as follows (use [geofabrik](tools.geofabrik.de/calc) to select bounds):
 
 Name | Value
 ---|---
@@ -38,7 +38,7 @@ RIGHT|14.41406216
 TOP|51.61801655
 
 9. Hit `Submit`
-10. Go to the Batch Dashboard and wait until the job finishes.
+10. Go to the Batch Dashboard and wait until the job finishes (30min).
 
 ## Import into Database
 
@@ -56,7 +56,7 @@ IMPORT_FILE|germany-alps.osm.pbf
 POSTGIS_HOSTNAME| (get **internal** IP-address or hostname from EC2)
 
 9. Hit `Submit`
-10. Go to the Batch Dashboard and wait until the job finishes.
+10. Go to the Batch Dashboard and wait until the job finishes (1h 45min).
 
 ## Postprocessing
 
@@ -73,7 +73,7 @@ Name | Value
 POSTGIS_HOSTNAME| (get **internal** IP-address or hostname from EC2)
 
 9. Hit `Submit`
-10. Go to the Batch Dashboard and wait until the job finishes.
+10. Go to the Batch Dashboard and wait until the job finishes (2h 30min).
 
 ## Clear Cache
 
