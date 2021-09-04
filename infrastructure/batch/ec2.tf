@@ -1,7 +1,7 @@
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2-security-group-${var.project}"
   description = "Allow only outbound traffic"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   egress {
     from_port   = 0
@@ -12,10 +12,10 @@ resource "aws_security_group" "ec2_security_group" {
 }
 
 data "template_file" "setup" {
-  template = "${file("setup.sh.tpl")}"
+  template = file("setup.sh.tpl")
   vars = {
-    device_name = "${var.device_name}"
-    docker_volume_size = "${var.docker_volume_size}" 
+    device_name = var.device_name
+    docker_volume_size = var.docker_volume_size
   }
 }
 
@@ -27,15 +27,15 @@ resource "aws_launch_template" "gis_batch_launchtemplate" {
   # vpc_security_group_ids  = ["${aws_security_group.ec2_security_group.id}"]
 
   block_device_mappings {
-      device_name = "${var.device_name}"
+      device_name = var.device_name
 
       ebs {
           delete_on_termination = "true"
-          volume_size           = "${var.volume_size}"
+          volume_size           = var.volume_size
           volume_type           = "gp2"
       }
   }
   # ebs_optimized           = "false"
-  user_data = "${base64encode(data.template_file.setup.rendered)}"
+  user_data = base64encode(data.template_file.setup.rendered)
 }
 

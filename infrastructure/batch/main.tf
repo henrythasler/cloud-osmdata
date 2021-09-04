@@ -1,7 +1,6 @@
 provider "aws" {
-  version = "~> 2.16"
   profile = "default"
-  region  = "${var.region}"
+  region  = var.region
 }
 
 # this is where we store the terraform-state.
@@ -15,4 +14,12 @@ terraform {
     dynamodb_table = "terraform-state-lock"
     encrypt        = true
   }
+
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 2.16"
+    }
+  }
+  required_version = ">= 0.13"  
 }

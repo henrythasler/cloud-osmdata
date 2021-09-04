@@ -30,6 +30,24 @@ services:
     entrypoint: bash
     command: /preprocessing.sh
 
+  slice:
+    image: "img-postgis:client"
+    depends_on:
+      - postgis
+    networks: 
+      - gis
+    volumes:
+      - ${IMPORT_PATH}:/tmp/data
+      - ${SOURCE_PATH}${SOURCE_FILE}:/tmp/osmdata.osm.pbf:ro
+      - ./../../processing/slice.sh:/slice.sh:ro
+      - ${POLY_PATH}:/tmp/poly
+    environment:
+      - LOCALHOST=${LOCALHOST}
+      - POLY_FILES=${POLY_FILES}
+      - OUT_FILE=${IMPORT_FILE}
+    entrypoint: bash
+    command: /slice.sh
+
   import:
     image: "img-postgis:client"
     depends_on:

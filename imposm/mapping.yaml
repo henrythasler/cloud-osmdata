@@ -271,6 +271,17 @@ tables:
     - name: scale
       type: integer
       key: mtb:scale
+    - name: sac
+      type: enumerate
+      key: sac_scale
+      args:
+          values:
+            - 'hiking'
+            - 'mountain_hiking'
+            - 'demanding_mountain_hiking'
+            - 'alpine_hiking'
+            - 'demanding_alpine_hiking'
+            - 'difficult_alpine_hiking'
     - name: tunnel
       type: bool
       key: tunnel
@@ -303,6 +314,7 @@ tables:
             - cycleway
             - track
             - path
+            - via_ferrata
             - service
             - footway
             - steps
@@ -311,7 +323,7 @@ tables:
       reject_regexp:
         'mtb:scale': '^\D+.*$'
     mapping:
-      highway: [motorway, motorway_link, trunk, trunk_link, primary, primary_link, secondary, secondary_link, tertiary, tertiary_link, road, unclassified, residential, pedestrian, living_street, service, track, path, footway, steps, bridleway, cycleway]
+      highway: [motorway, motorway_link, trunk, trunk_link, primary, primary_link, secondary, secondary_link, tertiary, tertiary_link, road, unclassified, residential, pedestrian, living_street, service, track, path, footway, steps, bridleway, cycleway, via_ferrata]
       bicycle: [designated]
 
   waterarea:

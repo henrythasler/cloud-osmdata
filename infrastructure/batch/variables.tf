@@ -22,6 +22,10 @@ variable "script_location" {
   default = "./../../processing/"
 }
 
+variable "poly_location" {
+  default = "./../../poly/"
+}
+
 variable "database_local" {
   default = "local"
 }
