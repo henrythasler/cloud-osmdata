@@ -158,8 +158,8 @@ drop "roads_temp"
 
 # roads - generalize
 generalize "roads" "roads_gen15" 3 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "(service <=1) OR (ST_Length(geometry) > 50)" &
-generalize "roads" "roads_gen14" 5 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 100)" &
-generalize "roads" "roads_gen13" 10 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway') AND ST_Length(geometry) > 200)" &
+generalize "roads" "roads_gen14" 5 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway', 'via_ferrata') AND ST_Length(geometry) > 100)" &
+generalize "roads" "roads_gen13" 10 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "rank<=15 OR bridge OR (subclass IN ('path', 'track', 'footway', 'bridleway', 'service', 'cycleway', 'via_ferrata') AND ST_Length(geometry) > 200)" &
 generalize "roads" "roads_gen12" 20 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "rank<=11 OR bridge OR (subclass='path' AND bicycle >= 3) OR (subclass IN ('track', 'service', 'cycleway') AND ST_Length(geometry) > 500) OR (subclass IN ('living_street', 'pedestrian', 'residential', 'unclassified') AND ST_Length(geometry) > 200)" &
 wait
 generalize "roads" "roads_gen11" 50 ", class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref" "rank<=10" &

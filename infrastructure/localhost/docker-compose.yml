@@ -43,8 +43,13 @@ services:
       - ${POLY_PATH}:/tmp/poly
     environment:
       - LOCALHOST=${LOCALHOST}
-      - POLY_FILES=${POLY_FILES}
+      - LEFT=9.39
+      - BOTTOM=46.67
+      - RIGHT=12.04
+      - TOP=47.81
+      - POLY_FILES=${POLY_FILES}  # comment out this line to use bbox slicing
       - OUT_FILE=${IMPORT_FILE}
+      - SOURCE_FILE=${SOURCE_FILE}
     entrypoint: bash
     command: /slice.sh
 
