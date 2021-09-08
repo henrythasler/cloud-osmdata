@@ -30,13 +30,13 @@ data "aws_ami" "amazonlinux" {
 }
 
 data "aws_vpc" "vpc" {
-  id = "${var.vpc_id}"
+  id = var.vpc_id
 }
 
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2-security-group-${var.project}"
   description = "Allow SSH and postgres inbound traffic"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
   # ingress {
   #   # SSH
   #   from_port   = 22
@@ -49,7 +49,7 @@ resource "aws_security_group" "ec2_security_group" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["${cidrsubnet(data.aws_vpc.vpc.cidr_block, 0, 0)}"]
+    cidr_blocks = [cidrsubnet(data.aws_vpc.vpc.cidr_block, 0, 0)]
   }
   egress {
     from_port   = 0
@@ -61,7 +61,7 @@ resource "aws_security_group" "ec2_security_group" {
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "ec2-${var.project}"
-  role = "${aws_iam_role.ec2_instance_role.name}"
+  role = aws_iam_role.ec2_instance_role.name
 }
 resource "aws_iam_role" "ec2_instance_role" {
   name               = "ec2-${var.project}"
@@ -83,31 +83,20 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" {
-  role = "${aws_iam_role.ec2_instance_role.name}"
+  role = aws_iam_role.ec2_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
 # FIXME: Limit permissions to 'cloudwatch:PutMetricData'
 resource "aws_iam_role_policy_attachment" "CloudWatchFullAccess" {
-  role = "${aws_iam_role.ec2_instance_role.name}"
+  role = aws_iam_role.ec2_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchFullAccess"
 }
 
 data "aws_subnet_ids" "subnets" {
-  vpc_id = "${var.vpc_id}"
+  vpc_id = var.vpc_id
 }
 
-data "template_file" "setup" {
-  template = "${file("setup.sh.tpl")}"
-  vars = {
-    project = "${var.project}"
-    postgres_password = "${var.postgres_password}"
-    region = "${var.region}"
-    repository_url = "${var.repository_url}"
-    device_name = "${var.device_name}"
-    pgdata = "${var.pgdata}"
-  }
-}
 
 resource "aws_spot_instance_request" "postgis" {
   ami = "${data.aws_ami.amazonlinux.id}"
@@ -127,12 +116,19 @@ resource "aws_spot_instance_request" "postgis" {
   associate_public_ip_address = true
   vpc_security_group_ids = ["${aws_security_group.ec2_security_group.id}"]
 
-  user_data = "${data.template_file.setup.rendered}"
+  user_data = templatefile("setup.sh.tpl", {
+    project = "${var.project}",
+    postgres_password = "${var.postgres_password}",
+    region = "${var.region}",
+    repository_url = "${var.repository_url}",
+    device_name = "${var.device_name}",
+    pgdata = "${var.pgdata}",
+  })
 
   # spot settings
   wait_for_fulfillment = true
   spot_type = "one-time"
-  depends_on   = ["aws_iam_instance_profile.instance_profile"]
+  depends_on   = [aws_iam_instance_profile.instance_profile]
 }
 
 

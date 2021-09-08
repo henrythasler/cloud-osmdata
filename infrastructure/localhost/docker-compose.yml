@@ -1,5 +1,6 @@
 version: "3.7"
 services:
+  # run with docker-compose run --rm --service-ports postgis
   postgis:
     image: "img-postgis:0.9"
     container_name: ${POSTGIS_HOSTNAME}
