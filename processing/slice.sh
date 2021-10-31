@@ -12,7 +12,7 @@ then
     aws s3 cp s3://${GIS_DATA_BUCKET}/data/pbf/${SOURCE_FILE} osmdata.osm.pbf --no-progress
 
     printf "${LOG_PREFIX}Downloading poly-files from s3://${GIS_DATA_BUCKET}/poly ...\n"
-    aws s3 cp s3://${GIS_DATA_BUCKET}/poly . --recursive --no-progress
+    aws s3 cp s3://${GIS_DATA_BUCKET}/poly ./poly --recursive --no-progress
 else 
     # no aws operations when testing on localhost. Make sure all files are available (e.g. via docker volumes)
     printf "${LOG_PREFIX}LOCALHOST is set to '$LOCALHOST'\n"

@@ -2,7 +2,7 @@ version: "3.7"
 services:
   # run with docker-compose run --rm --service-ports postgis
   postgis:
-    image: "img-postgis:0.9"
+    image: "postgis-server:latest"
     container_name: ${POSTGIS_HOSTNAME}
     networks: 
       - gis
@@ -13,10 +13,11 @@ services:
       - "127.0.0.1:5432:5432"
     environment:
       - PGDATA=/pgdata
+      - POSTGRES_HOST_AUTH_METHOD=trust
     command: -c 'config_file=/etc/postgresql/postgresql.conf'
 
   preprocessing:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -32,7 +33,7 @@ services:
     command: /preprocessing.sh
 
   slice:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -55,7 +56,7 @@ services:
     command: /slice.sh
 
   import:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -73,7 +74,7 @@ services:
     command: /import.sh
 
   postprocessing:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -88,7 +89,7 @@ services:
     command: /postprocessing.sh
 
   shp_download:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -102,7 +103,7 @@ services:
     command: /shp_download.sh    
 
   shp_import:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -119,7 +120,7 @@ services:
     command: /shp_import.sh
 
   shp_postprocessing:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 
@@ -135,7 +136,7 @@ services:
     command: /shp_postprocessing.sh
 
   shp_water:
-    image: "img-postgis:client"
+    image: "postgis-client:latest"
     depends_on:
       - postgis
     networks: 

@@ -21,7 +21,7 @@ psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -w -d ${DATABASE_NAME} \
     -c "ALTER DATABASE ${DATABASE_NAME} SET postgis.backend = geos;"
 
 echo "done"
-sleep 1s
+sleep 2s    # increase this if the db crashes unexpectedly ("WARNING: terminating connection because of crash of another server process")
 psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -w -d ${DATABASE_NAME} \
     -c "SELECT PostGIS_full_version();"
 

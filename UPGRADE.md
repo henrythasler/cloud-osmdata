@@ -36,6 +36,7 @@ LEFT|8.7890625
 BOTTOM|45.33670215
 RIGHT|14.41406216
 TOP|51.61801655
+POLY_FILES|mid-south-germany
 
 9. Hit `Submit`
 10. Go to the Batch Dashboard and wait until the job finishes (30min).
