@@ -1,3 +1,9 @@
+# these must be set individually in a secret.auto.tfvars file
+variable "vpc_id" {}
+variable "postgres_password" {}
+variable "repository_url" {}
+
+# these defaults should work
 variable "region" {
   default = "eu-central-1"
 }
@@ -15,7 +21,7 @@ variable "instance_type" {
 }
 
 variable "storage_size" {
-  default = "35"
+  default = "16"
 }
 
 variable "storage_type" {
@@ -26,17 +32,8 @@ variable "device_name" {
   default = "/dev/sdg"
 }
 
-variable "postgres_password" {}
-
 variable "ssh_key" {
   default = "ec2-postgres"
-}
-
-variable "vpc_id" {
-}
-
-variable "repository_url" {
-  default = "localhost"
 }
 
 variable "domain" {
