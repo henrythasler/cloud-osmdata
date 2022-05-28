@@ -156,7 +156,7 @@ resource "aws_batch_job_definition" "shp_import" {
 {
     "command": ["shp_import.sh"],
     "image": "${var.repository_url}:latest",
-    "memory": 2048,
+    "memory": 4096,
     "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
@@ -182,7 +182,7 @@ resource "aws_batch_job_definition" "shp_postprocessing" {
 {
     "command": ["shp_postprocessing.sh"],
     "image": "${var.repository_url}:latest",
-    "memory": 2048,
+    "memory": 4096,
     "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
@@ -207,7 +207,7 @@ resource "aws_batch_job_definition" "shp_water" {
 {
     "command": ["shp_water.sh"],
     "image": "${var.repository_url}:latest",
-    "memory": 2048,
+    "memory": 4096,
     "vcpus": 2,
     "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes": [],
@@ -253,7 +253,8 @@ resource "aws_batch_job_definition" "slice" {
         {"name": "RIGHT", "value": "14.41406216"},
         {"name": "TOP", "value": "51.61801655"},
         {"name": "OUT_FILE", "value": "germany-alps.osm.pbf"},
-        {"name": "SOURCE_FILE", "value": "europe-latest.osm.pbf"}
+        {"name": "SOURCE_FILE", "value": "europe-latest.osm.pbf"},
+        {"name": "POLY_FILES", "value": "mid-south-germany porto helsa"}
     ],
     "mountPoints": [],
     "ulimits": []

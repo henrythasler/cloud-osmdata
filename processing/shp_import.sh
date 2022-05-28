@@ -40,8 +40,8 @@ do
         fi
 
         table="$(basename -- ${file})"
-        table=${table%.*}
-        printf "%s\n" ${table}
+        table=${table%.*}   # remove file extension
+        printf "Processing shape ${table} (${file})\n" 
         
         psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} -c "DROP TABLE IF EXISTS ${table};" 2>&1 >/dev/null -c "COMMIT;" 2>&1 >/dev/null 
 
@@ -49,21 +49,20 @@ do
         #FIXME: find another solution to determine shapefile CRS
         crs=$(ogrinfo -ro -al -so ${file} | grep "EPSG" | tail -n1 | grep -Eo "[0-9]+")
 
-        printf "CRS is ${crs}"
+        printf "CRS is ${crs}\n"
 
-        # shp2pgsql -s ${crs} -I -g geometry ${file} ${table} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null
-        # exit
+        # continue
         if [ ${crs} != "3857" ]
         then
             printf "Reprojecting from EPSG:${crs} to EPSG:3857\n"
             base=`basename $file .shp`
 
-            # ogr2ogr --config PG_USE_COPY YES -t_srs EPSG:3857 -f PostgreSQL PG:"host=${POSTGIS_HOSTNAME} user=${POSTGIS_USER} dbname=${SHAPE_DATABASE_NAME}" ${file} 
-            ogr2ogr -clipsrc -180.0 -85.06 180.0 85.06 -skipfailures -lco ENCODING=UTF-8 -t_srs EPSG:3857 ./{$base}-3857.shp ${file} > /dev/null
-#            ogr2ogr -clipdst -20026376.39 -20048966.10 20026376.39 20048966.10 -skipfailures -lco ENCODING=UTF-8 -t_srs EPSG:3857 ./{$base}-3857.shp ${file} > /dev/null
+            mkdir -p 3857
+
+            ogr2ogr -clipsrc -180.0 -85.06 180.0 85.06 -skipfailures -lco ENCODING=UTF-8 -t_srs EPSG:3857 ./3857/${base}.shp ${file} > /dev/null
             if [ $? -eq 0 ]
             then 
-                shp2pgsql -s 3857 -I -g geometry ./{$base}-3857.shp ${table} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null
+                shp2pgsql -s 3857 -I -g geometry ./3857/${base}.shp ${table} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null
             else
                 printf "Failed Importing with source CRS\n"
                 shp2pgsql -s ${crs} -I -g geometry ${file} ${table} | psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} > /dev/null

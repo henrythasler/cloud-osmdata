@@ -127,7 +127,7 @@ resource "aws_spot_instance_request" "postgis" {
 
   # spot settings
   wait_for_fulfillment = true
-  spot_type = "persistent"
+  spot_type = "one-time"
   depends_on = [aws_iam_instance_profile.instance_profile]
   # instance_interruption_behaviour = "stop"
 }

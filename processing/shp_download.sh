@@ -49,12 +49,11 @@ do
         then 
             aws s3 cp ${shapefolder}${filename%.*}/ s3://${GIS_DATA_BUCKET}/data/shp/${filename%.*} --recursive --no-progress
         else 
-            echo "LOCALHOST is set to '$LOCALHOST'"; 
+            printf " LOCALHOST is set to '$LOCALHOST'"; 
             pwd
         fi
-        printf " ok"
+        printf " ok\n"
     else
-        printf " Download error"
+        printf " Download error\n"
     fi
 done
-
