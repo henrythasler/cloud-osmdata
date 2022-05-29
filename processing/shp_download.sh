@@ -5,7 +5,6 @@ shapefolder="data/shp/"
 shapefiles=(
     https://osmdata.openstreetmap.de/download/simplified-water-polygons-split-3857.zip
     https://osmdata.openstreetmap.de/download/water-polygons-split-3857.zip
-    # http://data.openstreetmapdata.com/water-polygons-generalized-3857.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes_europe.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_rivers_lake_centerlines.zip
@@ -20,6 +19,8 @@ shapefiles=(
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_geography_regions_polys.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_populated_places_simple.zip
     https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_urban_areas.zip
+    https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_roads.zip
+    https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_railroads.zip
 )
 
 mkdir -p ${shapefolder}

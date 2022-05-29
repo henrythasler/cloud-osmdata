@@ -78,6 +78,14 @@ psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
     -c "CREATE INDEX ON public.lakes USING gist (geometry)" \
     -c "ANALYZE public.lakes"
 
+### merge river datasources
+psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
+    -c "DROP TABLE IF EXISTS public.rivers" 2>&1 >/dev/null \
+    -c "CREATE TABLE public.rivers (gid serial primary key, name varchar, subclass varchar, scalerank int8, minzoom float8, minlabel float8, geometry geometry(MULTILINESTRING, 3857))" \
+    -c "INSERT INTO public.rivers (name, subclass, scalerank, minzoom, minlabel, geometry) SELECT CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END, featurecla, scalerank, min_zoom, min_label, geometry FROM ne_10m_rivers_lake_centerlines;" \
+    -c "INSERT INTO public.rivers (name, subclass, scalerank, minzoom, minlabel, geometry) SELECT CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END, featurecla, scalerank, min_zoom, min_label, geometry FROM ne_10m_rivers_europe;" \
+    -c "CREATE INDEX ON public.rivers USING gist (geometry)" \
+    -c "ANALYZE public.rivers"
 
 ### show resulting database size
 psql -h ${POSTGIS_HOSTNAME} -U ${POSTGIS_USER} -d ${SHAPE_DATABASE_NAME} \
