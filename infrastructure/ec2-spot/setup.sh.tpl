@@ -78,4 +78,24 @@ chmod +x /opt/metrics.sh
 
 # run metrics cron-job every minute
 echo '0-59 * * * * /opt/metrics.sh' >> /var/spool/cron/root
+
+# add another cron-job to monitor instance termination; in this case, a message is sent to a SNS topic
+# ATTENTION: curl variable syntax also collides with terraform template variables. % have to be 'escaped' with '%%' 
+cat << 'EOF' > /opt/watchdog.sh
+#! /bin/bash
+
+# check if the endpoint is available
+response_code=$(curl --write-out "%%{http_code}\n" http://169.254.169.254/latest/meta-data/spot/instance-action --output /dev/null --silent)
+
+# the endpoint is available, so something happened. Whatever it is, we send it out.
+if (( $response_code == 200 )); then
+    instance_action=$(curl http://169.254.169.254/latest/meta-data/spot/instance-action)
+    aws sns publish --region ${region} --topic-arn ${watchdog_topic} --subject postgis-status --message $${instance_action}
+fi
+EOF
+chmod +x /opt/watchdog.sh
+
+# run watchdog cron-job every minute
+echo '0-59 * * * * /opt/watchdog.sh' >> /var/spool/cron/root
+
 service cron reload >> /startup.log

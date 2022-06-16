@@ -123,6 +123,7 @@ resource "aws_spot_instance_request" "postgis" {
     repository_url = "${var.repository_url}",
     device_name = "${var.device_name}",
     pgdata = "${var.pgdata}",
+    watchdog_topic = "${data.aws_sns_topic.postgis_status.arn}",
   })
 
   # spot settings
