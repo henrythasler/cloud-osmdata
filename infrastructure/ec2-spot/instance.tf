@@ -100,6 +100,7 @@ data "aws_subnet_ids" "subnets" {
 
 resource "aws_spot_instance_request" "postgis" {
   ami = "${data.aws_ami.amazonlinux.id}"
+  spot_price = "0.01"
   instance_type = "${var.instance_type}"
   key_name = "${var.ssh_key}"
   iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
