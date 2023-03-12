@@ -52,6 +52,7 @@ services:
       - POLY_FILES=${POLY_FILES}  # comment out this line to use bbox slicing
       - OUT_FILE=${IMPORT_FILE}
       - SOURCE_FILE=${SOURCE_FILE}
+      - MERGE_FILES=${MERGE_FILES}
     entrypoint: bash
     command: /slice.sh
 

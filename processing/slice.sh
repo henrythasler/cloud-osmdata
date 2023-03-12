@@ -13,6 +13,15 @@ then
 
     printf "${LOG_PREFIX}Downloading poly-files from s3://${GIS_DATA_BUCKET}/poly ...\n"
     aws s3 cp s3://${GIS_DATA_BUCKET}/poly ./poly --recursive --no-progress
+
+    printf "${LOG_PREFIX}Downloading additional files to be merged from s3://${GIS_DATA_BUCKET}/data/pbf ...\n"
+
+    for MERGEFILE in ${MERGE_FILES} 
+    do
+#        printf "${LOG_PREFIX}${MERGEFILE}\n"
+        aws s3 cp s3://${GIS_DATA_BUCKET}/data/pbf/${MERGEFILE} ${MERGEFILE} --no-progress
+    done
+
 else 
     # no aws operations when testing on localhost. Make sure all files are available (e.g. via docker volumes)
     printf "${LOG_PREFIX}LOCALHOST is set to '$LOCALHOST'\n"
@@ -38,6 +47,7 @@ else
         collection="${collection}${POLYFILE}.o5m "
     done
 
+    collection="${collection}${MERGE_FILES} "
     printf "${LOG_PREFIX}Merging all slices (${collection})...\n"
     osmconvert ${collection} -o=slice.osm.pbf
 fi

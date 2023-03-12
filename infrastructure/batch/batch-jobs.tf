@@ -254,7 +254,8 @@ resource "aws_batch_job_definition" "slice" {
         {"name": "TOP", "value": "51.61801655"},
         {"name": "OUT_FILE", "value": "germany-alps.osm.pbf"},
         {"name": "SOURCE_FILE", "value": "europe-latest.osm.pbf"},
-        {"name": "POLY_FILES", "value": "mid-south-germany porto helsa"}
+        {"name": "POLY_FILES", "value": "mid-south-germany porto helsa"},
+        {"name": "MERGE_FILES", "value": "canary-islands-latest.osm.pbf"}
     ],
     "mountPoints": [],
     "ulimits": []
