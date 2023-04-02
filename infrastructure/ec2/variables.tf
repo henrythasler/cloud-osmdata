@@ -7,7 +7,7 @@ variable "availability_zone" {
 }
 
 variable "project" {
-  default = "postgis-server"
+  default = "postgis-ec2"
 }
 
 variable "instance_type" {
@@ -15,7 +15,7 @@ variable "instance_type" {
 }
 
 variable "storage_size" {
-  default = "40"
+  default = "16"
 }
 
 variable "device_name" {
@@ -40,7 +40,7 @@ variable "domain" {
 }
 
 variable "db_prefix" {
-  default = "db"
+  default = "ec2"
 }
 
 # database mount location (absolute path incl. '/')

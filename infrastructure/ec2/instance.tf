@@ -3,7 +3,7 @@ data "aws_ami" "amazonlinux" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-2.0*"]
+    values = ["amzn2-ami-kernel-5.10-hvm-2.0*"]
   }
 
   filter {
@@ -29,10 +29,14 @@ data "aws_ami" "amazonlinux" {
   owners = ["137112412989"] # Amazon
 }
 
+data "aws_vpc" "vpc" {
+  id = var.vpc_id
+}
+
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2-security-group-${var.project}"
   description = "Allow SSH and postgres inbound traffic"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
   # ingress {
   #   # SSH
   #   from_port   = 22
@@ -45,7 +49,7 @@ resource "aws_security_group" "ec2_security_group" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [cidrsubnet(data.aws_vpc.vpc.cidr_block, 0, 0)]
   }
   egress {
     from_port   = 0
@@ -57,8 +61,9 @@ resource "aws_security_group" "ec2_security_group" {
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "ec2-${var.project}"
-  role = "${aws_iam_role.ec2_instance_role.name}"
+  role = aws_iam_role.ec2_instance_role.name
 }
+
 resource "aws_iam_role" "ec2_instance_role" {
   name               = "ec2-${var.project}"
   description        = "Role to run EC2-Instances for ${var.project}"
@@ -79,66 +84,64 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerServiceforEC2Role" {
-  role = "${aws_iam_role.ec2_instance_role.name}"
+  role       = aws_iam_role.ec2_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
 # FIXME: Limit permissions to 'cloudwatch:PutMetricData'
 resource "aws_iam_role_policy_attachment" "CloudWatchFullAccess" {
-  role = "${aws_iam_role.ec2_instance_role.name}"
+  role       = aws_iam_role.ec2_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchFullAccess"
 }
 
 
-data "aws_subnet_ids" "subnets" {
-  vpc_id = "${var.vpc_id}"
-}
-
-data "template_file" "setup" {
-  template = "${file("setup.sh.tpl")}"
-  vars = {
-    project = "${var.project}"
-    postgres_password = "${var.postgres_password}"
-    region = "${var.region}"
-    repository_url = "${var.repository_url}"
-    device_name = "${var.device_name}"
-    pgdata = "${var.pgdata}"
+data "aws_subnets" "subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
   }
 }
 
 resource "aws_instance" "postgis" {
-  ami = "${data.aws_ami.amazonlinux.id}"
-  instance_type = "${var.instance_type}"
-  key_name = "${var.ssh_key}"
-  iam_instance_profile = "${aws_iam_instance_profile.instance_profile.name}"
-  availability_zone = "${var.region}${var.availability_zone}"
+  ami                  = data.aws_ami.amazonlinux.id
+  instance_type        = var.instance_type
+  key_name             = var.ssh_key
+  iam_instance_profile = aws_iam_instance_profile.instance_profile.name
+  availability_zone    = "${var.region}${var.availability_zone}"
 
   tags = {
-    Name = "${var.project}"
+    Name = var.project
   }
 
   root_block_device {
-    volume_size = "${tolist(data.aws_ami.amazonlinux.block_device_mappings)[0].ebs.volume_size}"
+    volume_size = tolist(data.aws_ami.amazonlinux.block_device_mappings)[0].ebs.volume_size
   }
 
-  associate_public_ip_address = true
-  vpc_security_group_ids = ["${aws_security_group.ec2_security_group.id}"]
+  associate_public_ip_address = false
+  vpc_security_group_ids      = ["${aws_security_group.ec2_security_group.id}"]
 
-  user_data = "${data.template_file.setup.rendered}"
+  user_data = templatefile("${path.module}/setup.sh.tftpl", {
+    project           = var.project,
+    postgres_password = var.postgres_password,
+    region            = var.region,
+    repository_url    = var.repository_url,
+    device_name       = var.device_name,
+    pgdata            = var.pgdata,
+  })
 }
-
 
 resource "aws_ebs_volume" "database_volume" {
   availability_zone = "${var.region}${var.availability_zone}"
-  size = "${var.storage_size}"
+  size              = var.storage_size
+  type              = "gp3"
 }
 
 resource "aws_volume_attachment" "database_volume_attachment" {
-  device_name = "${var.device_name}"
-  instance_id = "${aws_instance.postgis.id}"
-  volume_id = "${aws_ebs_volume.database_volume.id}"
+  device_name = var.device_name
+  instance_id = aws_instance.postgis.id
+  volume_id   = aws_ebs_volume.database_volume.id
 }
 
 output "instance" {
-  value = "${aws_instance.postgis.public_ip}"
+  value = aws_instance.postgis.public_ip
 }
