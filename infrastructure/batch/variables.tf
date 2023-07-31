@@ -37,7 +37,7 @@ variable "database_shapes" {
 }
 
 variable "device_name" {
-  default = "/dev/xvdcz"
+  default = "/dev/xvda"
 }
 
 variable "volume_size" {

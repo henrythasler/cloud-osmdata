@@ -2,6 +2,14 @@ resource "aws_s3_bucket" "gis_data_0000" {
   bucket        = "gis-data-0000"
   acl           = "private"
   force_destroy = true
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket_object" "preprocessing" {
@@ -83,8 +91,8 @@ resource "aws_s3_bucket_object" "slice" {
 
 resource "aws_s3_bucket_object" "poly" {
   for_each = fileset(var.poly_location, "*.poly")
-  bucket = aws_s3_bucket.gis_data_0000.id
-  key    = "poly/${each.value}"
-  source = "${var.poly_location}${each.value}"
-  etag   = filemd5("${var.poly_location}${each.value}")
+  bucket   = aws_s3_bucket.gis_data_0000.id
+  key      = "poly/${each.value}"
+  source   = "${var.poly_location}${each.value}"
+  etag     = filemd5("${var.poly_location}${each.value}")
 }

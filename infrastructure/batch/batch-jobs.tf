@@ -27,25 +27,27 @@ EOF
 resource "aws_batch_job_definition" "download_pbf" {
   name = "download_pbf"
   type = "container"
-  container_properties = <<EOF
-{
-    "command": ["download.sh"],
-    "image": "${var.repository_url}:latest",
-    "memory": 512,
-    "vcpus": 1,
-    "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
-    "volumes": [],
-    "environment": [
-        {"name": "BATCH_FILE_TYPE", "value": "script"},
-        {"name": "BATCH_FILE_S3_URL", "value": "s3://${aws_s3_bucket_object.download.bucket}/${aws_s3_bucket_object.download.id}"},
-        {"name": "GIS_DATA_BUCKET", "value": "${aws_s3_bucket.gis_data_0000.id}"},
-        {"name": "DOWNLOAD_URL", "value": "http://download.geofabrik.de/europe/germany/bayern/oberfranken-latest.osm.pbf"},
-        {"name": "OBJECT_NAME", "value": "oberfranken-latest.osm.pbf"}
-    ],
-    "mountPoints": [],
-    "ulimits": []
-}
-EOF
+
+  container_properties = jsonencode({
+    command    = ["download.sh"],
+    image      = "${var.repository_url}:latest"
+    jobRoleArn = "arn:aws:iam::324094553422:role/ecsTaskExecutionRole"
+
+    resourceRequirements = [
+      { type = "VCPU", value = "1" },
+      { type = "MEMORY", value = "512" }
+    ]
+    environment = [
+      { name = "BATCH_FILE_TYPE", value = "script" },
+      { name = "BATCH_FILE_S3_URL", value = "s3://${aws_s3_bucket_object.download.bucket}/${aws_s3_bucket_object.download.id}" },
+      { name = "GIS_DATA_BUCKET", value = "${aws_s3_bucket.gis_data_0000.id}" },
+      { name = "DOWNLOAD_URL", value = "https://download.geofabrik.de/europe/germany/bayern/oberfranken-latest.osm.pbf" },
+      { name = "OBJECT_NAME", value = "oberfranken-latest.osm.pbf" },
+    ]
+    volumes = []
+    mountPoints = []
+    ulimits     = []
+  })
 }
 
 resource "aws_batch_job_definition" "import_into_database" {
@@ -77,8 +79,8 @@ EOF
 
 
 resource "aws_batch_job_definition" "postprocessing" {
-  name = "postprocessing"
-  type = "container"
+  name                 = "postprocessing"
+  type                 = "container"
   container_properties = <<EOF
 {
     "command": ["postprocessing.sh"],
@@ -102,8 +104,8 @@ EOF
 }
 
 resource "aws_batch_job_definition" "production" {
-  name = "production"
-  type = "container"
+  name                 = "production"
+  type                 = "container"
   container_properties = <<EOF
 {
     "command": ["production.sh"],
@@ -150,8 +152,8 @@ EOF
 }
 
 resource "aws_batch_job_definition" "shp_import" {
-  name = "shp_import"
-  type = "container"
+  name                 = "shp_import"
+  type                 = "container"
   container_properties = <<EOF
 {
     "command": ["shp_import.sh"],
@@ -201,8 +203,8 @@ EOF
 }
 
 resource "aws_batch_job_definition" "shp_water" {
-  name = "shp_water"
-  type = "container"
+  name                 = "shp_water"
+  type                 = "container"
   container_properties = <<EOF
 {
     "command": ["shp_water.sh"],
@@ -234,31 +236,33 @@ EOF
 }
 
 resource "aws_batch_job_definition" "slice" {
-  name = "slice"
-  type = "container"
-  container_properties = <<EOF
-{
-    "command": ["slice.sh"],
-    "image": "${var.repository_url}:latest",
-    "memory": 3000,
-    "vcpus": 1,
-    "jobRoleArn": "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
-    "volumes": [],
-    "environment": [
-        {"name": "BATCH_FILE_TYPE", "value": "script"},
-        {"name": "BATCH_FILE_S3_URL", "value": "s3://${aws_s3_bucket_object.slice.bucket}/${aws_s3_bucket_object.slice.id}"},
-        {"name": "GIS_DATA_BUCKET", "value": "${aws_s3_bucket.gis_data_0000.id}"},
-        {"name": "LEFT", "value": "8.7890625"},
-        {"name": "BOTTOM", "value": "45.33670215"},
-        {"name": "RIGHT", "value": "14.41406216"},
-        {"name": "TOP", "value": "51.61801655"},
-        {"name": "OUT_FILE", "value": "germany-alps.osm.pbf"},
-        {"name": "SOURCE_FILE", "value": "europe-latest.osm.pbf"},
-        {"name": "POLY_FILES", "value": "mid-south-germany porto helsa"},
-        {"name": "MERGE_FILES", "value": "canary-islands-latest.osm.pbf"}
-    ],
-    "mountPoints": [],
-    "ulimits": []
-}
-EOF
+  name                 = "slice"
+  type                 = "container"
+
+  container_properties = jsonencode({
+    command    = ["slice.sh"],
+    image      = "${var.repository_url}:latest"
+    jobRoleArn = "arn:aws:iam::324094553422:role/ecsTaskExecutionRole"
+
+    resourceRequirements = [
+      { type = "VCPU", value = "1" },
+      { type = "MEMORY", value = "3000" }
+    ]
+    environment = [
+      { name = "BATCH_FILE_TYPE", value = "script" },
+      { name = "BATCH_FILE_S3_URL", value = "s3://${aws_s3_bucket_object.slice.bucket}/${aws_s3_bucket_object.slice.id}" },
+      { name = "GIS_DATA_BUCKET", value = "${aws_s3_bucket.gis_data_0000.id}" },
+      { name = "LEFT", value = "8.7890625" },
+      { name = "BOTTOM", value = "45.33670215" },
+      { name = "RIGHT", value = "14.41406216" },
+      { name = "TOP", value = "51.61801655" },
+      { name = "OUT_FILE", value = "slice.osm.pbf" },
+      { name = "SOURCE_FILE", value = "europe-latest.osm.pbf" },
+      { name = "POLY_FILES", value = "mid-south-germany porto helsa" },
+      { name = "MERGE_FILES", value = "canary-islands-latest.osm.pbf" },
+    ]
+    volumes = []
+    mountPoints = []
+    ulimits     = []
+  })
 }
