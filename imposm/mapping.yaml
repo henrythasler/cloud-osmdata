@@ -468,7 +468,7 @@ tables:
       route: [ferry]
       aerialway: [cable_car, chairlift, gondola, chair_lift, mixed_lift, goods, drag_lift]
       railway: [funicular]
-      attraction: [summer_toboggan]
+      attraction: [summer_toboggan, alpine_coaster, roller_coaster]
 
   manmade_points:
     type: point
