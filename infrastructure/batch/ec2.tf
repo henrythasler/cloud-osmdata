@@ -1,7 +1,13 @@
+data "aws_vpc" "gis" {
+  filter {
+    name   = "tag:Name"
+    values = ["${var.vpc}"]
+  }
+}
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2-security-group-${var.project}"
   description = "Allow only outbound traffic"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.gis.id
 
   egress {
     from_port   = 0

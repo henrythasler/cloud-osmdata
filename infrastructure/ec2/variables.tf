@@ -28,8 +28,7 @@ variable "ssh_key" {
   default = "ec2-postgres"
 }
 
-variable "vpc_id" {
-}
+variable "vpc" {}
 
 variable "repository_url" {
   default = "localhost"

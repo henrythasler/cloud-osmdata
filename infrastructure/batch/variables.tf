@@ -1,5 +1,5 @@
 # these must be set individually in a secret.auto.tfvars file
-variable "vpc_id" {}
+variable "vpc" {}
 variable "postgres_password" {}
 variable "repository_url" {}  # postgis-client
 

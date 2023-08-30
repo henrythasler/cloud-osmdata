@@ -7,6 +7,7 @@ provider "aws" {
 # Change at least `bucket` to match your account's environment.
 # Remove the whole terraform-entry to use a local state.
 terraform {
+  required_version = ">= 1.5"
   backend "s3" {
     bucket         = "terraform-state-0000"
     key            = "cloud-osmdata/ec2/terraform.tfstate"
@@ -17,8 +18,8 @@ terraform {
 
   required_providers {
     aws = {
-      source = "hashicorp/aws"
-      version = "~> 4.61"
+      source  = "hashicorp/aws"
+      version = "~> 5.13"
     }
   }
 }

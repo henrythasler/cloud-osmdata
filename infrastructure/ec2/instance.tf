@@ -26,17 +26,26 @@ data "aws_ami" "amazonlinux" {
     values = ["x86_64"]
   }
 
+  # used to pin ami-id to avoid frequent modifications; remove to use the latest AMI
+  filter {
+    name = "image-id"
+    values = ["ami-08722fffad032e569"]
+  }
+
   owners = ["137112412989"] # Amazon
 }
 
-data "aws_vpc" "vpc" {
-  id = var.vpc_id
+data "aws_vpc" "gis" {
+  filter {
+    name   = "tag:Name"
+    values = ["${var.vpc}"]
+  }
 }
 
 resource "aws_security_group" "ec2_security_group" {
   name        = "ec2-security-group-${var.project}"
   description = "Allow SSH and postgres inbound traffic"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.gis.id
   # ingress {
   #   # SSH
   #   from_port   = 22
@@ -49,7 +58,7 @@ resource "aws_security_group" "ec2_security_group" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = [cidrsubnet(data.aws_vpc.vpc.cidr_block, 0, 0)]
+    cidr_blocks = [cidrsubnet(data.aws_vpc.gis.cidr_block, 0, 0)]
   }
   egress {
     from_port   = 0
@@ -98,7 +107,7 @@ resource "aws_iam_role_policy_attachment" "CloudWatchFullAccess" {
 data "aws_subnets" "subnets" {
   filter {
     name   = "vpc-id"
-    values = [var.vpc_id]
+    values = [data.aws_vpc.gis.id]
   }
 }
 

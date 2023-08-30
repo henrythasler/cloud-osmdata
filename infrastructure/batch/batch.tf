@@ -1,5 +1,8 @@
-data "aws_subnet_ids" "subnets" {
-  vpc_id = var.vpc_id
+data "aws_subnets" "subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.gis.id]
+  }
 }
 
 resource "aws_iam_role" "ecs_instance_role" {
@@ -103,7 +106,7 @@ resource "aws_batch_compute_environment" "gis_batch_environment" {
       aws_security_group.ec2_security_group.id,
     ]
 
-    subnets = data.aws_subnet_ids.subnets.ids
+    subnets = toset(data.aws_subnets.subnets.ids)
 
     launch_template { 
       launch_template_id = aws_launch_template.gis_batch_launchtemplate.id
