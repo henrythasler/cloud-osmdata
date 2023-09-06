@@ -53,7 +53,7 @@ tables:
           values:
             - christian
     mapping:
-      natural: [peak]
+      natural: [peak, bay]
       highway: [bus_stop]
       amenity: [pub, fast_food, restaurant, bar, biergarten, hospital, parking, shelter, place_of_worship]
       tourism: [alpine_hut, hotel, viewpoint, information, zoo, aquarium, attraction, theme_park, camp_site, caravan_site]
