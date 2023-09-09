@@ -7,5 +7,5 @@ resource "aws_route53_record" "db_record" {
   name    = "${var.db_prefix}.${var.domain}"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${aws_instance.postgis.public_dns}"]
+  records = ["${aws_instance.postgis.private_dns}"]
 }

@@ -12,7 +12,15 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "example" {
   }
 }
 
-resource "aws_s3_bucket_acl" "website_acl" {
+resource "aws_s3_bucket_ownership_controls" "gis_data_ownership" {
+  bucket = aws_s3_bucket.gis_data_0000.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "gis_data_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.gis_data_ownership]
   bucket = aws_s3_bucket.gis_data_0000.id
   acl    = "private"
 }

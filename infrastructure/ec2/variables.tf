@@ -1,3 +1,9 @@
+# these must be set individually in a secret.auto.tfvars file
+variable "vpc" {}
+variable "postgres_password" {}
+variable "repository_url" {}  # postgis-server
+
+# these defaults should work
 variable "region" {
   default = "eu-central-1"
 }
@@ -22,16 +28,8 @@ variable "device_name" {
   default = "/dev/sdg"
 }
 
-variable "postgres_password" {}
-
 variable "ssh_key" {
   default = "ec2-postgres"
-}
-
-variable "vpc" {}
-
-variable "repository_url" {
-  default = "localhost"
 }
 
 variable "domain" {
