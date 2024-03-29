@@ -53,5 +53,5 @@ variable "gisdata" {
 }
 
 variable "postgis_hostname" {
-  default = "spot.cyclemap.link"
+  default = "ec2.cyclemap.link"
 }

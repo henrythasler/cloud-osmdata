@@ -54,12 +54,12 @@ resource "aws_batch_job_definition" "import_into_database" {
   container_properties = jsonencode({
     "command" : ["import.sh"],
     "image" : "${var.repository_url}:latest",
-    "memory" : 7000,
+    "memory" : 16000,
     "vcpus" : 2,
     "jobRoleArn" : "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes" : [],
     "environment" : [
-      { "name" : "IMPORT_FILE", "value" : "oberfranken-latest.osm.pbf" },
+      { "name" : "IMPORT_FILE", "value" : "slice.osm.pbf" },
       { "name" : "BATCH_FILE_TYPE", "value" : "script" },
       { "name" : "BATCH_FILE_S3_URL", "value" : "s3://${aws_s3_object.import.bucket}/${aws_s3_object.import.id}" },
       { "name" : "POSTGIS_HOSTNAME", "value" : "${var.postgis_hostname}" },
