@@ -126,7 +126,7 @@ resource "aws_instance" "postgis" {
     volume_size = tolist(data.aws_ami.amazonlinux.block_device_mappings)[0].ebs.volume_size
   }
 
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   vpc_security_group_ids      = ["${aws_security_group.ec2_security_group.id}"]
 
   user_data = templatefile("${path.module}/setup.sh.tftpl", {
