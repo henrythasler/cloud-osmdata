@@ -230,7 +230,7 @@ resource "aws_batch_job_definition" "slice" {
 
     resourceRequirements = [
       { type = "VCPU", value = "1" },
-      { type = "MEMORY", value = "3000" }
+      { type = "MEMORY", value = "4000" }
     ]
     environment = [
       { name = "BATCH_FILE_TYPE", value = "script" },
