@@ -470,6 +470,28 @@ tables:
       railway: [funicular]
       attraction: [summer_toboggan, alpine_coaster, roller_coaster]
 
+  transportation_polygons:
+    type: polygon
+    columns:
+    - name: geometry
+      type: geometry
+    - name: class
+      type: mapping_key
+    - name: subclass
+      type: mapping_value
+    - name: name_de
+      type: string
+      key: name:de
+    - name: name_en
+      type: string
+      key: name:en
+    - name: name
+      type: string
+      key: name
+    mapping:
+      aerialway: [drag_lift]
+      attraction: [roller_coaster]
+
   manmade_points:
     type: point
     columns:
