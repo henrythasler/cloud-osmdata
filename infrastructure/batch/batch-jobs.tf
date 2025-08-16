@@ -54,8 +54,8 @@ resource "aws_batch_job_definition" "import_into_database" {
   container_properties = jsonencode({
     "command" : ["import.sh"],
     "image" : "${var.repository_url}:latest",
-    "memory" : 16000,
-    "vcpus" : 2,
+    "memory" : 32000,
+    "vcpus" : 4,
     "jobRoleArn" : "arn:aws:iam::324094553422:role/ecsTaskExecutionRole",
     "volumes" : [],
     "environment" : [

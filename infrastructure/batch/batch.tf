@@ -99,8 +99,8 @@ resource "aws_batch_compute_environment" "gis_batch_environment" {
     desired_vcpus       = 0
 
     type                = "SPOT"
-    bid_percentage      = 50
-    allocation_strategy = "SPOT_CAPACITY_OPTIMIZED"
+    bid_percentage      = 20
+    allocation_strategy = "SPOT_PRICE_CAPACITY_OPTIMIZED"
 
     security_group_ids = [
       aws_security_group.ec2_security_group.id,
