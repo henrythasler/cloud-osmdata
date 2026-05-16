@@ -82,7 +82,7 @@ resource "aws_iam_role_policy_attachment" "spot_iam_fleet_role" {
 }
 
 resource "aws_batch_compute_environment" "gis_batch_environment" {
-  compute_environment_name = var.project
+  name = var.project
 
   compute_resources {
     instance_role = aws_iam_instance_profile.ecs_instance_role.arn
@@ -94,13 +94,12 @@ resource "aws_batch_compute_environment" "gis_batch_environment" {
 
     ec2_key_pair = "ec2-postgres"
 
-    max_vcpus           = 4
+    max_vcpus           = 8
     min_vcpus           = 0
     desired_vcpus       = 0
 
     type                = "SPOT"
-    bid_percentage      = 20
-    allocation_strategy = "SPOT_PRICE_CAPACITY_OPTIMIZED"
+    allocation_strategy = "SPOT_CAPACITY_OPTIMIZED"
 
     security_group_ids = [
       aws_security_group.ec2_security_group.id,
@@ -124,6 +123,9 @@ resource "aws_batch_job_queue" "gis_batch_queue" {
   name                 = var.project
   state                = "ENABLED"
   priority             = 1
-  compute_environments = [aws_batch_compute_environment.gis_batch_environment.arn]
+  compute_environment_order {
+    order               = 1
+    compute_environment = aws_batch_compute_environment.gis_batch_environment.arn
+  }  
   depends_on           = [aws_batch_compute_environment.gis_batch_environment]
 }

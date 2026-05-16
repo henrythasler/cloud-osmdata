@@ -12,14 +12,14 @@ terraform {
     bucket         = "terraform-state-0000"
     key            = "cloud-osmdata/batch/terraform.tfstate"
     region         = "eu-central-1"
-    dynamodb_table = "terraform-state-lock"
+    use_lockfile   = true
     encrypt        = true
   }
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.13"
+      version = "~> 6.45"
     }
   }
 }
